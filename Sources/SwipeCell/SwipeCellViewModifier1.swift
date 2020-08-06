@@ -119,9 +119,10 @@ struct SwipeCellModifier:ViewModifier{
                     Color.clear
                     HStack(spacing:0){
                         if position == .left {
-                            Rectangle().fill(Color.clear).frame(width:spaceWidth1)
+//                            Rectangle().fill(Color.clear).frame(width:spaceWidth1)
+                            Spacer()
                         }
-                        if slot.slotStyle == .destructive && i == slot.slots.count - 1 && position == .right {
+                        if slot.slotStyle == .destructive && slot.slots.count == 1 && position == .right {
                             Rectangle().fill(Color.clear).frame(width:spaceWidth)
                         }
                         buttonView(slot, i)
@@ -134,11 +135,12 @@ struct SwipeCellModifier:ViewModifier{
                                 resetStatus()
                             }
                             .frame(width:slot.buttonWidth)
-                        if slot.slotStyle == .destructive && i == slot.slots.count - 1 && position == .left {
+                        if slot.slotStyle == .destructive && slot.slots.count == 1 && position == .left {
                             Rectangle().fill(Color.clear).frame(width:spaceWidth)
                         }
                         if position == .right{
-                            Rectangle().fill(Color.clear).frame(width:spaceWidth1)
+//                            Rectangle().fill(Color.clear).frame(width:spaceWidth1)
+                            Spacer()
                         }
                     }
                 }
