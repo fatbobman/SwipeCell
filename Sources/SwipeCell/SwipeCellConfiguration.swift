@@ -48,7 +48,7 @@ public struct SwipeCellSlot{
     public let appearAnimation:Animation
     public let dismissAnimation:Animation
     
-    public init(slots:[SwipeCellButton],slotStyle:SwipeCellSlotStyle = .normal,buttonWidth:CGFloat = 74,sticky:Bool = true,appearAnimation:Animation = .easeOut(duration:0.5),dismissAnimation:Animation = .interactiveSpring()){
+    public init(slots:[SwipeCellButton],slotStyle:SwipeCellSlotStyle = .normal,buttonWidth:CGFloat = 74,appearAnimation:Animation = .easeOut(duration:0.5),dismissAnimation:Animation = .interactiveSpring()){
         self.buttonWidth = buttonWidth
         self.slots = slots
         self.slotStyle = slotStyle
