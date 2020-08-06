@@ -22,7 +22,7 @@ struct SwipeCellModifier:ViewModifier{
     @State var leftOffset:CGFloat = -10000
     @State var rightOffset:CGFloat = 10000
     @State var spaceWidth:CGFloat = 0
-    @State var spaceWidth1:CGFloat = 0
+   
     
     let cellID = UUID()
    
@@ -119,7 +119,6 @@ struct SwipeCellModifier:ViewModifier{
                     Color.clear
                     HStack(spacing:0){
                         if position == .left {
-//                            Rectangle().fill(Color.clear).frame(width:spaceWidth1)
                             Spacer()
                         }
                         if slot.slotStyle == .destructive && slot.slots.count == 1 && position == .right {
@@ -139,7 +138,6 @@ struct SwipeCellModifier:ViewModifier{
                             Rectangle().fill(Color.clear).frame(width:spaceWidth)
                         }
                         if position == .right{
-//                            Rectangle().fill(Color.clear).frame(width:spaceWidth1)
                             Spacer()
                         }
                     }
@@ -226,13 +224,11 @@ struct SwipeCellModifier:ViewModifier{
             if feedStatus == .feedOnce {
                 withAnimation(.linear) {
                     spaceWidth = 0
-                    spaceWidth1 = frameWidth - slot.buttonWidth
                 }
             }
             else {
                 withAnimation(.linear) {
                 spaceWidth = max(0,abs(offset) - slot.buttonWidth)
-                spaceWidth1 = frameWidth - slot.buttonWidth - spaceWidth
             }
             }
         }
