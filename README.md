@@ -5,7 +5,7 @@ SwipeCell 需要 XCode 12 ,iOS 14
 
 ![Demo](Image/demo.gif)
 
-## 按钮配置
+## 配置Button
 ```swift
 let button1 = SwipeCellButton(buttonStyle: .titleAndImage,
                 title: "Mark", 
@@ -39,10 +39,11 @@ let button3 = SwipeCellButton(buttonStyle: .view, title:"",systemImage: "", view
 }, backgroundColor: .orange, action: {unread.toggle()}, feedback: false)
 ```
 
-## Slot配置
+## 配置Slot
 ```swift
 let slot1 = SwipeCellSlot(slots: [button2,button1])
-let slot2 = SwipeCellSlot(slots: [button4], slotStyle: .destructive, buttonWidth: 60) //销毁模式
+let slot2 = SwipeCellSlot(slots: [button4], slotStyle: .destructive, buttonWidth: 60) 
+let slot3 = SwipeCellSlot(slots: [button2,button1],slotStyle: .destructiveDelay) 
 ```
 
 ## 装配
@@ -81,13 +82,12 @@ cellView()
 
 由于SwiftUI没有很好的方案能够获取滚动状态,所以采用了 [Introspect](https://github.com/siteline/SwiftUI-Introspect.git)实现的上述功能.
 
+destructiveDelay 形式的 button，需要在action中添加 dismissDestructiveDelayButton()已保证在alter执行后，Cell复位
 
 
-下载[Demo](https://github.com/fatbobman/SwipeCellDemo.git)
 
 ## 当前问题
 * 动画细节仍然不足
-* 滚动列表自动消除Button的实现还不完全
 * EditMode模式下仍有不足
 
 
