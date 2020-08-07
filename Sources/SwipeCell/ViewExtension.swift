@@ -58,3 +58,4 @@ extension Notification.Name{
   public static let swipeCellReset = Notification.Name("com.swipeCell.reset")
 }
 
+

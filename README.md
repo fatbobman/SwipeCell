@@ -1,7 +1,7 @@
 # SwipeCell
 
 SwipeCell 是一个用Swift 5.3开发的 SwiftUI库.目标是为了实现类似iOS Mail程序实现的左右滑动菜单功能.
-SwipeCell可以运行在iOS13及以上版本
+SwipeCell 需要 XCode 12 ,iOS 14 
 
 ![Demo](Image/demo.gif)
 

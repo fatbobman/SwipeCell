@@ -16,13 +16,15 @@ struct SwipeCellModifier:ViewModifier{
     let swipeCellStyle:SwipeCellStyle
     
     @State var status:CellStatus = .showCell
+    @State var showDalayButtonWith:CGFloat = 0
+    
     @State var offset:CGFloat = 0
     
     @State var frameWidth:CGFloat = 99999
     @State var leftOffset:CGFloat = -10000
     @State var rightOffset:CGFloat = 10000
     @State var spaceWidth:CGFloat = 0
-   
+    
     
     let cellID = UUID()
    
@@ -112,35 +114,67 @@ struct SwipeCellModifier:ViewModifier{
     
     func slotView(slot:SwipeCellSlot,i:Int,position:SwipeCellSlotPosition)-> some View{
         let buttons = slot.slots
+        
         return Rectangle()
             .fill(buttons[i].backgroundColor)
             .overlay(
-                ZStack{
+                ZStack(alignment: position == .left ? .trailing : .leading){
                     Color.clear
-                    HStack(spacing:0){
-                        if position == .left {
-                            Spacer()
-                        }
-                        if slot.slotStyle == .destructive && slot.slots.count == 1 && position == .right {
-                            Rectangle().fill(Color.clear).frame(width:spaceWidth)
-                        }
+
                         buttonView(slot, i)
                             .contentShape(Rectangle())
                             .onTapGesture{
+                                if slot.slotStyle == .destructiveDelay && i == slot.slots.count - 1 {
+                                withAnimation(.easeInOut){
+                                    if position == .left {
+                                        showDalayButtonWith = slot.buttonWidth
+                                    }
+                                    else {
+                                        showDalayButtonWith = -slot.buttonWidth
+                                    }
+                                }
+                                }
                                 buttons[i].action()
                                 if buttons[i].feedback {
                                     successFeedBack(swipeCellStyle.vibrationForButton)
                                 }
+                                if !(slot.slotStyle == .destructiveDelay && i == slot.slots.count - 1) {
                                 resetStatus()
+                                }
                             }
                             .frame(width:slot.buttonWidth)
-                        if slot.slotStyle == .destructive && slot.slots.count == 1 && position == .left {
-                            Rectangle().fill(Color.clear).frame(width:spaceWidth)
-                        }
-                        if position == .right{
-                            Spacer()
-                        }
-                    }
+                            .offset(x:spaceWidth)
+                            .alignmentGuide(.trailing, computeValue: { d in
+                                if slot.slotStyle == .destructive && slot.slots.count == 1 && position == .left {
+                                    var result:CGFloat = 0
+                                    if offset > slot.buttonWidth {
+                                        result =  d[.trailing] + offset - slot.buttonWidth
+                                    }
+                                    else {
+                                        result =  d[.trailing]
+                                    }
+                                    return result
+                                } else {
+                                 return d[.trailing]
+                                }
+                            })
+                            .alignmentGuide(.leading, computeValue: {d in
+                                if slot.slotStyle == .destructive && slot.slots.count == 1 && position == .right {
+                                    var result:CGFloat = 0
+                                    if abs(offset) > slot.buttonWidth {
+                                        result =  d[.leading]  + slot.buttonWidth - abs(offset)
+                                    }
+                                    else {
+                                        result =  d[.leading]
+                                    }
+                                    
+                                    return result
+                                }
+                                else {
+                                return d[.leading]
+                                }
+                            })
+                            
                 }
             )
             .contentShape(Rectangle())
@@ -158,8 +192,9 @@ struct SwipeCellModifier:ViewModifier{
     func loadButtons(_ slot:SwipeCellSlot,position:SwipeCellSlotPosition,frame:CGRect) -> some View{
         let buttons = slot.slots
         
-        //单button的销毁按钮
+        
         if slot.slotStyle == .destructive {
+            //单button的销毁按钮
             if buttons.count == 1{
                 return AnyView(
                     slotView(slot: slot, i: 0, position: position)
@@ -191,20 +226,83 @@ struct SwipeCellModifier:ViewModifier{
             }
         }
         else {
+            
             return AnyView(
                 ZStack{
                     ForEach(0..<buttons.count ,id:\.self){ i in
+                        if slot.slotStyle == .destructiveDelay && i == buttons.count - 1 {
                         slotView(slot: slot, i: i, position: position)
-                            .offset(x:cellOffset(i: i, count: buttons.count, position: position,width: frame.width,slot:slot))
+                            .offset(x:cellOffset(i: i, count: buttons.count, position: position,width: frame.width,slot:slot) + showDalayButtonWith)
                             .zIndex(Double(i))
+                        }
+                        else {
+                            slotView(slot: slot, i: i, position: position)
+                                .offset(x:cellOffset(i: i, count: buttons.count, position: position,width: frame.width,slot:slot) )
+                                .zIndex(Double(i))
+                        }
                     }
                 }
             )
         }
     }
     
+    func offsetForSingleDestructiveButton(slot:SwipeCellSlot,position:SwipeCellSlotPosition){
+        if slot.slotStyle == .destructive && slot.slots.count == 1 {
+            switch position{
+            case .left:
+                print("left")
+                DispatchQueue.main.async {
+                spaceWidth = 0
+                }
+                if feedStatus == .feedOnce {
+                    DispatchQueue.main.async {
+                    withAnimation(.easeInOut){
+                        spaceWidth = offset - slot.buttonWidth
+                    }
+                    }
+                }
+                if feedStatus == .feedAgain{
+                    DispatchQueue.main.async {
+                    withAnimation(.easeInOut){
+                        spaceWidth = 0
+                    }
+                    }
+                }
+
+            case .right:
+                DispatchQueue.main.async {
+                spaceWidth = 0
+                }
+                if feedStatus == .feedOnce {
+                    DispatchQueue.main.async {
+                    withAnimation(.easeInOut){
+                    spaceWidth = offset + slot.buttonWidth
+                    }
+                    }
+                }
+                if feedStatus == .feedAgain {
+                    DispatchQueue.main.async {
+                    withAnimation(.easeInOut){
+                    spaceWidth = 0
+                    }
+                    }
+                }
+            default:
+                DispatchQueue.main.async {
+                spaceWidth = 0
+                }
+            }
+        }
+        else {
+            DispatchQueue.main.async {
+            spaceWidth = 0
+            }
+        }
+    }
     
     func cellOffset(i:Int,count:Int,position:SwipeCellSlotPosition,width:CGFloat,slot:SwipeCellSlot) -> CGFloat {
+        
+        
         if frameWidth == 99999 {
             DispatchQueue.main.async {
                 frameWidth = width
@@ -220,27 +318,15 @@ struct SwipeCellModifier:ViewModifier{
         else {
             result = width + cellOffset
         }
-        DispatchQueue.main.async {
-            if feedStatus == .feedOnce {
-                withAnimation(.linear) {
-                    spaceWidth = 0
-                }
-            }
-            else {
-                withAnimation(.linear) {
-                spaceWidth = max(0,abs(offset) - slot.buttonWidth)
-            }
-            }
-        }
-
         
+
         return result
     }
     
     func lastButtonOffset(position:SwipeCellSlotPosition,slot:SwipeCellSlot?) {
     
         guard let slot = slot, slot.slotStyle == .destructive else {
-            
+
             if position == .left {
                 leftOffset = -frameWidth
             } else {

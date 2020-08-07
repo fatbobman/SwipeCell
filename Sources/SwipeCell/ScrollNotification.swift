@@ -121,3 +121,7 @@ extension View{
             .modifier(ScrollNotificationForScrollView())
     }
 }
+
+public func dismissDestructiveDelayButton(){
+    NotificationCenter.default.post(name: .swipeCellReset, object: nil)
+}

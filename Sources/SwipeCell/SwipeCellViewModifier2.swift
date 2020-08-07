@@ -8,10 +8,6 @@ import SwiftUI
 
 extension SwipeCellModifier{
     
-
-    
-    
-    
     
     func body(content: Content) -> some View {
         if editMode?.wrappedValue == .active {dismissNotification()}
@@ -67,6 +63,41 @@ extension SwipeCellModifier{
         .onReceive(timer){_ in
             resetStatus()
         }
+        .onChange(of:offset){ offset in
+            //当前向右
+            if offset > 0 {
+                guard let leftSlot = leftSlot else {return}
+                if leftSlot.slotStyle == .destructive && leftSlot.slots.count == 1 {
+                    if feedStatus == .feedOnce {
+                        withAnimation(.easeInOut){
+                            spaceWidth = offset - leftSlot.buttonWidth
+                        }
+                    }
+                    if feedStatus == .feedAgain {
+                        withAnimation(.easeInOut){
+                            spaceWidth = 0
+                        }
+                    }
+                }
+            }
+            //当前向左
+            if offset < 0{
+                guard let rightSlot = rightSlot else {return}
+                if rightSlot.slotStyle == .destructive && rightSlot.slots.count == 1 {
+                if feedStatus == .feedOnce {
+                    withAnimation(.easeInOut){
+                        spaceWidth = -(abs(offset) - rightSlot.buttonWidth)
+                    }
+                }
+                if feedStatus == .feedAgain {
+                    withAnimation(.easeInOut){
+                        spaceWidth = 0
+                    }
+                }
+                }
+            }
+        }
+
         .listRowInsets(EdgeInsets())
         
     }
@@ -86,10 +117,14 @@ extension SwipeCellModifier{
             offset = 0
             leftOffset = -frameWidth
             rightOffset = frameWidth
+            spaceWidth = 0
+            showDalayButtonWith = 0
         }
         feedStatus = .none
         cancellables.removeAll()
         currentCellID = nil
+
+        
     }
     
     func successFeedBack(_ type:Vibration){
