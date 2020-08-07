@@ -37,8 +37,8 @@ struct ContentView: View {
         
         
         //Configure Slot ,Several Buttons can be placed in one Slot.
-        let slot1 = SwipeCellSlot(slots: [button2,button1],slotStyle: .destructiveDelay)
-        let slot2 = SwipeCellSlot(slots: [button4], slotStyle: .destructive, buttonWidth: 60)
+        let slot1 = SwipeCellSlot(slots: [button2,button2,button1],slotStyle: .destructiveDelay)
+        let slot2 = SwipeCellSlot(slots: [button4], slotStyle: .destructiveDelay, buttonWidth: 60)
         let slot3 = SwipeCellSlot(slots: [button1,button2,button4],slotStyle: .destructive)
         let slot4 = SwipeCellSlot(slots: [button3],slotStyle: .normal, buttonWidth: 60)
         

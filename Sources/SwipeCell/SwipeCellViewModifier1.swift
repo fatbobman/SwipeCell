@@ -127,10 +127,10 @@ struct SwipeCellModifier:ViewModifier{
                                 if slot.slotStyle == .destructiveDelay && i == slot.slots.count - 1 {
                                 withAnimation(.easeInOut){
                                     if position == .left {
-                                        showDalayButtonWith = slot.buttonWidth
+                                        showDalayButtonWith = slot.buttonWidth * CGFloat(slot.slots.count - 1)
                                     }
                                     else {
-                                        showDalayButtonWith = -slot.buttonWidth
+                                        showDalayButtonWith = -slot.buttonWidth * CGFloat(slot.slots.count - 1)
                                     }
                                 }
                                 }
