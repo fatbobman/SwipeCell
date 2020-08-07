@@ -12,6 +12,8 @@ struct ContentView: View {
     @State private var showSheet = false
     @State private var bookmark = false
     @State private var unread = false
+    @State private var showAlert = false
+    
     var body: some View {
         
         //Configure button
@@ -35,12 +37,14 @@ struct ContentView: View {
         }, backgroundColor: .orange, action: {unread.toggle()}, feedback: false)
         let button4 = SwipeCellButton(buttonStyle: .titleAndImage, title: "Chat", systemImage: "bubble.left.and.bubble.right.fill", titleColor: .yellow, imageColor: .yellow, view: nil, backgroundColor: .pink, action: {showSheet.toggle()}, feedback: true)
         
+        let button5 = SwipeCellButton(buttonStyle: .titleAndImage, title: "Delete", systemImage: "trash", titleColor: .white, imageColor: .white, view: nil, backgroundColor: .red, action: {showAlert.toggle()}, feedback: true)
         
         //Configure Slot ,Several Buttons can be placed in one Slot.
-        let slot1 = SwipeCellSlot(slots: [button2,button2,button1],slotStyle: .destructiveDelay)
-        let slot2 = SwipeCellSlot(slots: [button4], slotStyle: .destructiveDelay, buttonWidth: 60)
+        let slot1 = SwipeCellSlot(slots: [button2,button1])
+        let slot2 = SwipeCellSlot(slots: [button4], slotStyle: .destructive, buttonWidth: 60)
         let slot3 = SwipeCellSlot(slots: [button1,button2,button4],slotStyle: .destructive)
         let slot4 = SwipeCellSlot(slots: [button3],slotStyle: .normal, buttonWidth: 60)
+        let slot5 = SwipeCellSlot(slots: [button2,button5],slotStyle: .destructiveDelay)
         
         return
             NavigationView{
@@ -55,13 +59,22 @@ struct ContentView: View {
                         .swipeCell(cellPosition: .right, leftSlot: nil, rightSlot: slot3)
                     
                     demo4()
-                        .swipeCell(cellPosition: .both, leftSlot: slot2, rightSlot: slot2)
+                        .swipeCell(cellPosition: .left, leftSlot: slot2, rightSlot: nil)
                     
                     demo5()
                         .swipeCell(cellPosition: .left, leftSlot: slot4, rightSlot: nil)
                     
                     demo6()
                         .swipeCell(cellPosition: .both, leftSlot: slot1, rightSlot: slot1 ,swipeCellStyle: SwipeCellStyle(alignment: .leading, dismissWidth: 20, appearWidth: 20, destructiveWidth: 240, vibrationForButton: .error, vibrationForDestructive: .heavy, autoResetTime: 3))
+                    
+                    demo7()
+                        .swipeCell(cellPosition: .right, leftSlot: nil, rightSlot: slot5)
+                        .alert(isPresented: $showAlert){
+                            Alert(title: Text("Are you sure"), message: nil,primaryButton:.destructive(Text("Delete"), action: {
+                                print("deleted")
+                                dismissDestructiveDelayButton()
+                            }),secondaryButton: .cancel({dismissDestructiveDelayButton()}))
+                        }
                     
                     ForEach(0..<30){ i in
                         Text("Scroll List can dismiss button")
@@ -156,6 +169,17 @@ struct ContentView: View {
             VStack{
                 Text("You can set the auto reset duration ")
                 Text("3 sec")
+            }
+            Spacer()
+        }
+        .frame(height:100)
+    }
+    
+    func demo7() -> some View{
+        HStack{
+            Spacer()
+            VStack{
+                Text("destructiveDelay Button")
             }
             Spacer()
         }
