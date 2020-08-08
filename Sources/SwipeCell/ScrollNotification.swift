@@ -7,7 +7,7 @@ import Introspect
 import Combine
 
 /*
- 这个版本的dismiss响应及时,不过会产生和SwiftUI List的一些冲突,
+ dismissSwipeCellFast响应及时,不过会产生和SwiftUI List的一些冲突,
  导致删除和选择会有问题.所以屏蔽的删除.如果你不需要选择并自己实现删除,这个版本会给你最快速的滚动后SwipeButton复位动作
  另外,这个dismissSwipeCellFast不支持Button响应,包括NavitionLink.如果你确定要使用,请使用onTapGesture来响应点击.
 总之,如果如果你不很清楚,那么就使用dismissSwipeCell
@@ -157,7 +157,10 @@ struct DismissSwipeCellForScrollView:ViewModifier{
             }
         }
         .onPreferenceChange(ScrollViewPreferencKey.self){ preference in
-            if topleadingY != preference.first!.topLeadingY {
+            if topleadingY == nil {
+                topleadingY = preference.first!.topLeadingY
+            }
+            if abs(topleadingY! - preference.first!.topLeadingY) < 10 {
                 NotificationCenter.default.post(name: .swipeCellReset, object: nil)
             }
             else {

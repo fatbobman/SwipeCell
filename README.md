@@ -110,7 +110,7 @@ ScrollView{
 
 * dismissSwipeCell 在editmode下支持选择
 * dismissSwipeCellForScrollView 用于ScrollView,通常用于只有一个Cell的场景,比如说Mail中的邮件内容显示.参看Demo中的演示
-* dismissSwipeCellForScrollViewForLazyVStack 用于ScrollView中使用LazyVStack场景.
+* dismissSwipeCellForScrollViewForLazyVStack 用于ScrollView中使用LazyVStack场景.个别时候会打断滑动菜单出现动画.个人觉得如无特别需要还是使用List代替LazyVStack比较好.
 
 
 由于SwiftUI没有很好的方案能够获取滚动状态,所以采用了 [Introspect](https://github.com/siteline/SwiftUI-Introspect.git)实现的上述功能.
