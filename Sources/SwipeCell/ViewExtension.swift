@@ -5,7 +5,7 @@
 import SwiftUI
 
 extension View{
-    public func swipeCell(cellPosition:SwipeCellSlotPosition,leftSlot:SwipeCellSlot?,rightSlot:SwipeCellSlot?,swipeCellStyle:SwipeCellStyle = .defaultStyle(),disable:Bool = false) -> some View{
+    public func swipeCell(cellPosition:SwipeCellSlotPosition,leftSlot:SwipeCellSlot?,rightSlot:SwipeCellSlot?,swipeCellStyle:SwipeCellStyle = .defaultStyle(),clip:Bool = true,disable:Bool = false) -> some View{
         var d = disable
         if cellPosition == .none {
             d = true
@@ -16,7 +16,7 @@ extension View{
         else {
           return  AnyView(
                 self
-                  .modifier(SwipeCellModifier(cellPosition: cellPosition, leftSlot: leftSlot, rightSlot: rightSlot, swipeCellStyle: swipeCellStyle))
+                    .modifier(SwipeCellModifier(cellPosition: cellPosition, leftSlot: leftSlot, rightSlot: rightSlot, swipeCellStyle: swipeCellStyle,clip:clip))
             )
         }
     }

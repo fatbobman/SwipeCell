@@ -51,22 +51,21 @@ struct ContentView: View {
                 List{
                     demo1()
                         .swipeCell(cellPosition: .right, leftSlot: nil, rightSlot: slot1)
-                    
+
                     demo2()
                         .swipeCell(cellPosition: .both, leftSlot: slot1, rightSlot: slot1)
-                    
+
                     demo3()
                         .swipeCell(cellPosition: .right, leftSlot: nil, rightSlot: slot3)
-                    
+
                     demo4()
                         .swipeCell(cellPosition: .left, leftSlot: slot2, rightSlot: nil)
-                    
+
                     demo5()
                         .swipeCell(cellPosition: .left, leftSlot: slot4, rightSlot: nil)
-                    
+
                     demo6()
                         .swipeCell(cellPosition: .both, leftSlot: slot1, rightSlot: slot1 ,swipeCellStyle: SwipeCellStyle(alignment: .leading, dismissWidth: 20, appearWidth: 20, destructiveWidth: 240, vibrationForButton: .error, vibrationForDestructive: .heavy, autoResetTime: 3))
-                    
                     demo7()
                         .swipeCell(cellPosition: .right, leftSlot: nil, rightSlot: slot5)
                         .alert(isPresented: $showAlert){
@@ -75,16 +74,12 @@ struct ContentView: View {
                                 dismissDestructiveDelayButton()
                             }),secondaryButton: .cancel({dismissDestructiveDelayButton()}))
                         }
-                    
-                    ForEach(0..<30){ i in
-                        Text("Scroll List can dismiss button")
-                            .frame(height:100,alignment: .center)
-                            .swipeCell(cellPosition: .both, leftSlot: slot1, rightSlot: slot1)
-                    }
+                    NavigationLink("ScrollView LazyVStack",destination:demo9())
+                    NavigationLink("ScrollView single Cell",destination:Demo8())
                 }
                 .navigationBarTitle("SwipeCell Demo",displayMode: .inline)
             }
-            .dismissSwipeCellFast()
+            .dismissSwipeCell()
             .sheet(isPresented: $showSheet, content: {Text("Hello world")})
         
     }
@@ -92,7 +87,7 @@ struct ContentView: View {
     func demo1() -> some View{
         HStack{
             Spacer()
-            Text("Swipe left")
+            Text("← Swipe left")
             if bookmark {
                 Image(systemName: "bookmark.fill")
                     .font(.largeTitle)
@@ -111,7 +106,7 @@ struct ContentView: View {
     func demo2() -> some View{
         HStack{
             Spacer()
-            Text("Sliding on both sides")
+            Text("← → Sliding on both sides")
             if bookmark {
                 Image(systemName: "bookmark.fill")
                     .font(.largeTitle)
@@ -131,7 +126,7 @@ struct ContentView: View {
         HStack{
             Spacer()
             VStack{
-                Text("Swipe left")
+                Text("⇠ Swipe left")
                 Text("MutliButton with destructive button")
             }
             Spacer()
@@ -143,7 +138,7 @@ struct ContentView: View {
         HStack{
             Spacer()
             VStack{
-                Text("Swipe right")
+                Text("⇢ Swipe right")
                 Text("One destructive button")
             }
             Spacer()
@@ -155,7 +150,7 @@ struct ContentView: View {
         HStack{
             Spacer()
             VStack{
-                Text("Swipe right")
+                Text("→ Swipe right")
                 Text("Dynamic Button")
             }
             Spacer()
@@ -167,8 +162,8 @@ struct ContentView: View {
         HStack{
             Spacer()
             VStack{
-                Text("You can set the auto reset duration ")
-                Text("3 sec")
+                Text("← You can set the auto reset duration ")
+                Text("please wait 3 sec")
             }
             Spacer()
         }
@@ -179,12 +174,32 @@ struct ContentView: View {
         HStack{
             Spacer()
             VStack{
-                Text("destructiveDelay Button")
+                Text("← destructiveDelay Button")
+                Text("click delete")
             }
             Spacer()
         }
         .frame(height:100)
     }
+    
+    func demo9() -> some View{
+        let button4 = SwipeCellButton(buttonStyle: .titleAndImage, title: "New", systemImage: "bubble.left.and.bubble.right.fill", titleColor: .white, imageColor: .white, view: nil, backgroundColor: .blue, action: {}, feedback: true)
+        
+        let button5 = SwipeCellButton(buttonStyle: .titleAndImage, title: "Delete", systemImage: "trash", titleColor: .white, imageColor: .white, view: nil, backgroundColor: .red, action: {}, feedback: true)
+        let slot = SwipeCellSlot(slots: [button4,button5])
+        let lists = (0...100).map{$0}
+        return ScrollView{
+            LazyVStack{
+            ForEach(lists,id:\.self){ item in
+               Text("Swipe in scrollView:\(item)")
+                .frame(height:80)
+                .swipeCell(cellPosition: .both, leftSlot:slot, rightSlot: slot)
+                .dismissSwipeCellForScrollViewForLazyVStack()
+            }
+            }
+        }
+    }
+    
 }
 
 struct ContentView_Previews: PreviewProvider {
@@ -192,4 +207,69 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+struct Demo8:View{
+    let button1 = SwipeCellButton(buttonStyle: .view, title: "", systemImage: "", view: {AnyView(
+         Circle()
+            .fill(Color.blue)
+            .frame(width:40,height:40)
+            .overlay(
+                Image(systemName: "arrowshape.turn.up.left.fill")
+                    .font(.headline)
+                    .foregroundColor(.white)
+            )
+    )}, backgroundColor: .clear, action: {})
+    
+    let button2 = SwipeCellButton(buttonStyle: .view, title: "", systemImage: "", view: {AnyView(
+         Circle()
+            .fill(Color.orange)
+            .frame(width:40,height:40)
+            .overlay(
+                Image(systemName: "flag.fill")
+                    .font(.headline)
+                    .foregroundColor(.white)
+            )
+    )}, backgroundColor: .clear, action: {})
+    
+    let button3 = SwipeCellButton(buttonStyle: .view, title: "", systemImage: "", view: {AnyView(
+         Circle()
+            .fill(Color.red)
+            .frame(width:40,height:40)
+            .overlay(
+                Image(systemName: "trash.fill")
+                    .font(.headline)
+                    .foregroundColor(.white)
+            )
+    )}, backgroundColor: .clear, action: {})
+    
+    let button4 = SwipeCellButton(buttonStyle: .view, title: "", systemImage: "", view: {AnyView(
+         Circle()
+            .fill(Color.blue)
+            .frame(width:40,height:40)
+            .overlay(
+                Image(systemName: "envelope.badge.fill")
+                    .font(.headline)
+                    .foregroundColor(.white)
+            )
+    )}, backgroundColor: .clear, action: {})
+    
+    var body: some View{
+        let rightSlot = SwipeCellSlot(slots: [button1,button2,button3],buttonWidth: 50)
+        let leftSlot = SwipeCellSlot(slots: [button4],buttonWidth: 50)
+        ScrollView{
+            VStack{
+                Text("SwipeCell in ScrollView")
+                    .dismissSwipeCellForScrollView()  //目前在ScrollView下注入的方式在iOS14下有点问题,所以必须将dissmissSwipeCellForScrollView放置在ScrollView内部
+                        //dismissSwipeCellForScrollView 只能用于 VStack, 如果是LazyVStack请使用dismissSwipeCellForScrollViewForLazyVStack
+                ForEach(0..<40){ _ in
+                    Text("mail content....")
+                }
+                Text("End")
+            }
+            .frame(maxWidth:.infinity,maxHeight: .infinity)
+        }
+        .swipeCell(cellPosition: .both, leftSlot: leftSlot, rightSlot: rightSlot,clip: false)
+    }
+}
+
 

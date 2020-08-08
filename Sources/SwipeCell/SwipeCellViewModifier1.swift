@@ -14,6 +14,7 @@ struct SwipeCellModifier:ViewModifier{
     let leftSlot:SwipeCellSlot?
     let rightSlot:SwipeCellSlot?
     let swipeCellStyle:SwipeCellStyle
+    let clip:Bool
     
     @State var status:CellStatus = .showCell
     @State var showDalayButtonWith:CGFloat = 0
@@ -183,11 +184,11 @@ struct SwipeCellModifier:ViewModifier{
             }
     }
     
-    func getNameId(i:Int,position:SwipeCellSlotPosition) -> Int {
-        cellID.hashValue + i + position.rawValue
-    }
+//    func getNameId(i:Int,position:SwipeCellSlotPosition) -> Int {
+//        cellID.hashValue + i + position.rawValue
+//    }
     
-    @State var count = 0
+//    @State var count = 0
     
     func loadButtons(_ slot:SwipeCellSlot,position:SwipeCellSlotPosition,frame:CGRect) -> some View{
         let buttons = slot.slots

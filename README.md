@@ -69,6 +69,7 @@ cellView()
 ```
 
 ## 滚动列表自动消除
+*For List*
 ```swift
   List{
      ```
@@ -76,9 +77,41 @@ cellView()
   .dismissSwipeCell()
 }
 ```
-* dismissSwipeCell 在editmode下支持选择,但响应较慢
-* dismissSwipeCellFast 在editmode下选择cell有问题,但响应迅速
-* dismissSwipeCellForScrollView 用于ScrollView
+
+*For single cell in ScrollView*
+```swift
+ScrollView{
+    VStack{
+        Text("Mail Title")
+            .dismissSwipeCellForScrollView() 
+        Text("Mail Content")
+        ....
+    }
+    .frame(maxWidth:.infinity,maxHeight: .infinity)
+}
+.swipeCell(cellPosition: .both, leftSlot: leftSlot, rightSlot: rightSlot,clip: false)
+```
+
+*For LazyVStack in ScrollView*
+```swift
+ScrollView{
+    LazyVStack{
+    ForEach(lists,id:\.self){ item in
+       Text("Swipe in scrollView:\(item)")
+        .frame(height:80)
+        .swipeCell(cellPosition: .both, leftSlot:slot, rightSlot: slot)
+        .dismissSwipeCellForScrollViewForLazyVStack()
+    }
+    }
+}
+```
+
+
+
+* dismissSwipeCell 在editmode下支持选择
+* dismissSwipeCellForScrollView 用于ScrollView,通常用于只有一个Cell的场景,比如说Mail中的邮件内容显示.参看Demo中的演示
+* dismissSwipeCellForScrollViewForLazyVStack 用于ScrollView中使用LazyVStack场景.
+
 
 由于SwiftUI没有很好的方案能够获取滚动状态,所以采用了 [Introspect](https://github.com/siteline/SwiftUI-Introspect.git)实现的上述功能.
 

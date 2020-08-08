@@ -8,12 +8,13 @@ import SwiftUI
 
 extension SwipeCellModifier{
     
-    
     func body(content: Content) -> some View {
         if editMode?.wrappedValue == .active {dismissNotification()}
+        
         return ZStack(alignment:.topLeading){
+            Color.clear.zIndex(0)
             ZStack{
-                Color.clear.zIndex(0)
+                
                 
                 //加载左侧按钮
                 GeometryReader{ proxy in
@@ -52,7 +53,9 @@ extension SwipeCellModifier{
         }
         .contentShape(Rectangle())
         .gesture(getGesture())
-        .clipShape(Rectangle())
+        .ifIs(clip){
+        $0.clipShape(Rectangle())
+        }
         .onReceive(resetNotice){ notice in
             //如果其他的cell发送通知或者list发送通知,则本cell复位
             if cellID != notice.object as? UUID {
