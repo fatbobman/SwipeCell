@@ -54,11 +54,9 @@ struct ContentView: View {
                             print("test")
                         }
                         .swipeCell(cellPosition: .right, leftSlot: nil, rightSlot: slot1)
-
+                    Button(action:{print("button")}){
                     demo2()
-                        .onTapGesture {
-                            print("test")
-                        }
+                    }
                         .swipeCell(cellPosition: .both, leftSlot: slot1, rightSlot: slot1)
 
                     demo3()

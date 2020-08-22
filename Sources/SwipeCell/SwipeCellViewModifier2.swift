@@ -40,20 +40,13 @@ extension SwipeCellModifier{
                     content
                 }
                 .zIndex(3)
-//                .highPriorityGesture(TapGesture(count: 1), including:  status == .showCell && (currentCellID == cellID || currentCellID == nil) ? .subviews : .none)
                 .highPriorityGesture(TapGesture(count: 1), including: currentCellID == nil ? .subviews : .none)
                 .contentShape(Rectangle())
-//                .onTapGesture(count: 1, perform: {
-//                    if status != .showCell{
-//                        resetStatus()
-//                        dismissNotification()
-//                    }
-//                })
-                .onTapGesture(count: 1, perform: {
+                //解决Button冲突问题.
+                .onTapGesture(count: currentCellID != nil ? 1 : 4, perform: {
                         resetStatus()
                         dismissNotification()
                 })
-               
                 .offset(x:offset)
             }
         }
