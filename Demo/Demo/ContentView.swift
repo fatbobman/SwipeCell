@@ -50,23 +50,44 @@ struct ContentView: View {
             NavigationView{
                 List{
                     demo1()
+                        .onTapGesture {
+                            print("test")
+                        }
                         .swipeCell(cellPosition: .right, leftSlot: nil, rightSlot: slot1)
 
                     demo2()
+                        .onTapGesture {
+                            print("test")
+                        }
                         .swipeCell(cellPosition: .both, leftSlot: slot1, rightSlot: slot1)
 
                     demo3()
+                        .onTapGesture {
+                            print("test")
+                        }
                         .swipeCell(cellPosition: .right, leftSlot: nil, rightSlot: slot3)
 
                     demo4()
+                        .onTapGesture {
+                            print("test")
+                        }
                         .swipeCell(cellPosition: .left, leftSlot: slot2, rightSlot: nil)
 
                     demo5()
+                        .onTapGesture {
+                            print("test")
+                        }
                         .swipeCell(cellPosition: .left, leftSlot: slot4, rightSlot: nil)
 
                     demo6()
+                        .onTapGesture {
+                            print("test")
+                        }
                         .swipeCell(cellPosition: .both, leftSlot: slot1, rightSlot: slot1 ,swipeCellStyle: SwipeCellStyle(alignment: .leading, dismissWidth: 20, appearWidth: 20, destructiveWidth: 240, vibrationForButton: .error, vibrationForDestructive: .heavy, autoResetTime: 3))
                     demo7()
+                        .onTapGesture {
+                            print("test")
+                        }
                         .swipeCell(cellPosition: .right, leftSlot: nil, rightSlot: slot5)
                         .alert(isPresented: $showAlert){
                             Alert(title: Text("Are you sure"), message: nil,primaryButton:.destructive(Text("Delete"), action: {
