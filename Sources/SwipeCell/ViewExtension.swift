@@ -25,7 +25,7 @@ extension View{
 
 
 extension View{
-    public func hidden(_ condition:Bool) -> some View{
+    public func _hidden(_ condition:Bool) -> some View{
         Group{
         if condition {
             AnyView(self)
