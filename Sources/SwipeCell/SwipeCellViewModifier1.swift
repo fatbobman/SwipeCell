@@ -63,8 +63,6 @@ struct SwipeCellModifier:ViewModifier{
       self.leftSlot = leftSlot
       self.rightSlot = rightSlot
       self.swipeCellStyle = swipeCellStyle
-        
-        
     }
     
     func buttonView(_ slot:SwipeCellSlot,_ i:Int) -> some View{
@@ -145,10 +143,10 @@ struct SwipeCellModifier:ViewModifier{
                                     }
                                 }
                                 }
-                                buttons[i].action()
                                 if buttons[i].feedback {
                                     successFeedBack(swipeCellStyle.vibrationForButton)
                                 }
+                                buttons[i].action()
                                 if !(slot.slotStyle == .destructiveDelay && i == slot.slots.count - 1) {
                                 resetStatus()
                                 }

@@ -30,7 +30,6 @@ extension SwipeCellModifier{
                     ZStack{
                         if let rbs = rightSlot{
                             loadButtons(rbs,position: .right,frame:proxy.frame(in:.local))
-                                
                         }
                     }
                 }.zIndex(2)
