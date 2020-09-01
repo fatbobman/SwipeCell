@@ -230,7 +230,7 @@ struct SwipeCellModifier:ViewModifier{
                         slotView(slot: slot, i: buttons.count - 1, position: .left)
                             .zIndex(10)
                             .offset(x:leftOffset)
-                            .animation(.easeInOut)
+                            
 
                         }
 
@@ -238,7 +238,7 @@ struct SwipeCellModifier:ViewModifier{
                             slotView(slot: slot, i: buttons.count - 1, position: .right)
                               .offset(x:rightOffset)
                               .zIndex(10)
-                              .animation(.easeInOut)
+                              
                         }
                     }
                 )
@@ -347,15 +347,16 @@ struct SwipeCellModifier:ViewModifier{
     }
     
     func lastButtonOffset(position:SwipeCellSlotPosition,slot:SwipeCellSlot?) {
-    
+        
+        let animation = slot?.appearAnimation ?? Animation.easeOut(duration:0.5)
+        
         guard let slot = slot, slot.slotStyle == .destructive else {
-
             if position == .left {
-                withAnimation(.easeInOut){
+                withAnimation(animation){
                 leftOffset = -frameWidth
                 }
             } else {
-                withAnimation(.easeInOut){
+                withAnimation(animation){
                 rightOffset = frameWidth
                 }
             }
@@ -368,42 +369,34 @@ struct SwipeCellModifier:ViewModifier{
         
         let cellOffset = offset * (CGFloat(1) / CGFloat(count) )
         if position == .left {
-            withAnimation(.easeInOut){
             result = -frameWidth + cellOffset
-            }
             
         }
         else {
-            withAnimation(.easeInOut){
             result = frameWidth + cellOffset
-            }
         }
         
         if feedStatus == .feedOnce {
             if position == .left {
-                withAnimation(.easeInOut){
                 result = -frameWidth + offset
-                }
-                withAnimation(.easeInOut){
+                withAnimation(animation){
                     leftOffset = result
                 }
             }
             else {
-                withAnimation(.easeInOut){
                 result = frameWidth + offset
-                }
                 withAnimation(.easeInOut){
                     rightOffset = result
                 }
             }
         } else if feedStatus == .feedAgain {
             if position == .left {
-                withAnimation(.easeInOut){
+                withAnimation(animation){
                     leftOffset = result
                 }
             }
             else {
-                withAnimation(.easeInOut){
+                withAnimation(animation){
                     rightOffset = result
                 }
             }
@@ -411,12 +404,12 @@ struct SwipeCellModifier:ViewModifier{
         else {
             
             if position == .left {
-                withAnimation(.easeInOut){
+                withAnimation(animation){
                 leftOffset = result
                 }
             }
             else {
-                withAnimation(.easeInOut){
+                withAnimation(animation){
                 rightOffset = result
                 }
             }
