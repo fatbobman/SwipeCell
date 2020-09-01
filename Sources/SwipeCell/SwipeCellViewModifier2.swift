@@ -21,6 +21,7 @@ extension SwipeCellModifier{
                     ZStack{
                         if let lbs = leftSlot {
                             loadButtons(lbs,position: .left,frame:proxy.frame(in:.local))
+                                
                         }
                     }
                 }.zIndex(1)
@@ -29,10 +30,11 @@ extension SwipeCellModifier{
                     ZStack{
                         if let rbs = rightSlot{
                             loadButtons(rbs,position: .right,frame:proxy.frame(in:.local))
+                                
                         }
                     }
                 }.zIndex(2)
-                  
+                
                 
                 //加载Cell内容
                 ZStack(alignment: swipeCellStyle.alignment){

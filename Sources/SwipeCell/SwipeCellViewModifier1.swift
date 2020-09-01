@@ -57,6 +57,16 @@ struct SwipeCellModifier:ViewModifier{
     @State var timer = Timer.publish(every: 1, on: .main, in: .common)
     @State var cancellables:Set<AnyCancellable> = []
     
+    init(cellPosition:SwipeCellSlotPosition,leftSlot:SwipeCellSlot?,rightSlot:SwipeCellSlot?,swipeCellStyle:SwipeCellStyle,clip:Bool){
+      _cellPosition = State(wrappedValue: cellPosition)
+      self.clip = clip
+      self.leftSlot = leftSlot
+      self.rightSlot = rightSlot
+      self.swipeCellStyle = swipeCellStyle
+        
+        
+    }
+    
     func buttonView(_ slot:SwipeCellSlot,_ i:Int) -> some View{
         let button = slot.slots[i]
         let viewStyle = button.buttonStyle
@@ -184,22 +194,22 @@ struct SwipeCellModifier:ViewModifier{
             }
     }
     
-//    func getNameId(i:Int,position:SwipeCellSlotPosition) -> Int {
-//        cellID.hashValue + i + position.rawValue
-//    }
-    
-//    @State var count = 0
     
     func loadButtons(_ slot:SwipeCellSlot,position:SwipeCellSlotPosition,frame:CGRect) -> some View{
         let buttons = slot.slots
         
         if slot.slotStyle == .destructive && leftOffset == -10000 && position == .left {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             leftOffset = cellOffset(i: buttons.count - 1, count: buttons.count, position: position,width: frame.width,slot:slot)
+            }
         }
-        
+
         if slot.slotStyle == .destructive && rightOffset == 10000 && position == .right {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             rightOffset = cellOffset(i: buttons.count - 1, count: buttons.count, position: position,width: frame.width,slot:slot)
+            }
         }
+
         
         if slot.slotStyle == .destructive {
             //单button的销毁按钮
