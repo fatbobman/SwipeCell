@@ -95,6 +95,11 @@ struct ContentView: View {
                         }
                     NavigationLink("ScrollView LazyVStack",destination:demo9())
                     NavigationLink("ScrollView single Cell",destination:Demo8())
+                    ForEach(0..<10){ i in
+                        Text("id:\(i)")
+                            .swipeCell(cellPosition: .both, leftSlot: slot1, rightSlot: slot1)
+                    }
+
                 }
                 .navigationBarTitle("SwipeCell Demo",displayMode: .inline)
             }

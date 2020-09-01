@@ -193,6 +193,13 @@ struct SwipeCellModifier:ViewModifier{
     func loadButtons(_ slot:SwipeCellSlot,position:SwipeCellSlotPosition,frame:CGRect) -> some View{
         let buttons = slot.slots
         
+        if slot.slotStyle == .destructive && leftOffset == -10000 && position == .left {
+            leftOffset = cellOffset(i: buttons.count - 1, count: buttons.count, position: position,width: frame.width,slot:slot)
+        }
+        
+        if slot.slotStyle == .destructive && rightOffset == 10000 && position == .right {
+            rightOffset = cellOffset(i: buttons.count - 1, count: buttons.count, position: position,width: frame.width,slot:slot)
+        }
         
         if slot.slotStyle == .destructive {
             //单button的销毁按钮
@@ -215,12 +222,15 @@ struct SwipeCellModifier:ViewModifier{
                         slotView(slot: slot, i: buttons.count - 1, position: .left)
                             .zIndex(10)
                             .offset(x:leftOffset)
+                            .animation(.easeInOut)
+
                         }
-                        
+
                         if slot.slotStyle == .destructive && position == .right {
                             slotView(slot: slot, i: buttons.count - 1, position: .right)
                               .offset(x:rightOffset)
                               .zIndex(10)
+                              .animation(.easeInOut)
                         }
                     }
                 )
@@ -290,13 +300,17 @@ struct SwipeCellModifier:ViewModifier{
                 }
             default:
                 DispatchQueue.main.async {
+                    withAnimation(.easeInOut){
                 spaceWidth = 0
+                    }
                 }
             }
         }
         else {
             DispatchQueue.main.async {
+                withAnimation(.easeInOut){
             spaceWidth = 0
+                }
             }
         }
     }
@@ -329,9 +343,13 @@ struct SwipeCellModifier:ViewModifier{
         guard let slot = slot, slot.slotStyle == .destructive else {
 
             if position == .left {
+                withAnimation(.easeInOut){
                 leftOffset = -frameWidth
+                }
             } else {
+                withAnimation(.easeInOut){
                 rightOffset = frameWidth
+                }
             }
             return
         }
@@ -342,22 +360,30 @@ struct SwipeCellModifier:ViewModifier{
         
         let cellOffset = offset * (CGFloat(1) / CGFloat(count) )
         if position == .left {
+            withAnimation(.easeInOut){
             result = -frameWidth + cellOffset
+            }
             
         }
         else {
+            withAnimation(.easeInOut){
             result = frameWidth + cellOffset
+            }
         }
         
         if feedStatus == .feedOnce {
             if position == .left {
+                withAnimation(.easeInOut){
                 result = -frameWidth + offset
+                }
                 withAnimation(.easeInOut){
                     leftOffset = result
                 }
             }
             else {
+                withAnimation(.easeInOut){
                 result = frameWidth + offset
+                }
                 withAnimation(.easeInOut){
                     rightOffset = result
                 }
@@ -375,11 +401,16 @@ struct SwipeCellModifier:ViewModifier{
             }
         }
         else {
+            
             if position == .left {
+                withAnimation(.easeInOut){
                 leftOffset = result
+                }
             }
             else {
+                withAnimation(.easeInOut){
                 rightOffset = result
+                }
             }
         }
     }

@@ -58,7 +58,6 @@ extension SwipeCellModifier{
         .onReceive(resetNotice){ notice in
 //            if status == .showCell {return}
             //如果其他的cell发送通知或者list发送通知,则本cell复位
-            
             if cellID != notice.object as? UUID {
                 resetStatus()
                 currentCellID = notice.object as? UUID ?? nil
