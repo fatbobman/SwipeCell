@@ -129,39 +129,8 @@ struct SwipeCellModifier:ViewModifier{
             .overlay(
                 ZStack(alignment: position == .left ? .trailing : .leading){
                     Color.clear
-
                         buttonView(slot, i)
                             .contentShape(Rectangle())
-                            .onTapGesture{
-                                if slot.slotStyle == .destructiveDelay && i == slot.slots.count - 1 {
-                                withAnimation(.easeInOut){
-                                    if position == .left {
-                                        offset = frameWidth
-//                                        showDalayButtonWith = slot.buttonWidth * CGFloat(slot.slots.count - 1)
-                                        showDalayButtonWith = 0.0001 //修改成iOS14的样式
-
-                                    }
-                                    else {
-                                        offset = -frameWidth
-//                                        showDalayButtonWith = -(slot.buttonWidth * CGFloat(slot.slots.count - 1))
-                                        showDalayButtonWith = -0.0001
-                                       
-                                    }
-                                }
-                                if buttons[i].feedback {
-                                        successFeedBack(swipeCellStyle.vibrationForDestructive)
-                                }
-                                }
-                                else {
-                                if buttons[i].feedback {
-                                    successFeedBack(swipeCellStyle.vibrationForButton)
-                                }
-                                }
-                                buttons[i].action()
-                                if !(slot.slotStyle == .destructiveDelay && i == slot.slots.count - 1) {
-                                resetStatus()
-                                }
-                            }
                             .frame(width:slot.buttonWidth)
                             .offset(x:spaceWidth)
                             .alignmentGuide(.trailing, computeValue: { d in
@@ -199,7 +168,32 @@ struct SwipeCellModifier:ViewModifier{
             )
             .contentShape(Rectangle())
             .onTapGesture{
+                if slot.slotStyle == .destructiveDelay && i == slot.slots.count - 1 {
+                withAnimation(.easeInOut){
+                    if position == .left {
+                        offset = frameWidth
+                        showDalayButtonWith = 0.0001 //修改成iOS14的样式
+
+                    }
+                    else {
+                        offset = -frameWidth
+                        showDalayButtonWith = -0.0001
+                       
+                    }
+                }
+                if buttons[i].feedback {
+                        successFeedBack(swipeCellStyle.vibrationForDestructive)
+                }
+                }
+                else {
+                if buttons[i].feedback {
+                    successFeedBack(swipeCellStyle.vibrationForButton)
+                }
+                }
+                buttons[i].action()
+                if !(slot.slotStyle == .destructiveDelay && i == slot.slots.count - 1) {
                 resetStatus()
+                }
             }
     }
     
