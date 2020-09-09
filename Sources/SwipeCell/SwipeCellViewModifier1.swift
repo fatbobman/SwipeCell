@@ -136,15 +136,26 @@ struct SwipeCellModifier:ViewModifier{
                                 if slot.slotStyle == .destructiveDelay && i == slot.slots.count - 1 {
                                 withAnimation(.easeInOut){
                                     if position == .left {
-                                        showDalayButtonWith = slot.buttonWidth * CGFloat(slot.slots.count - 1)
+                                        offset = frameWidth
+//                                        showDalayButtonWith = slot.buttonWidth * CGFloat(slot.slots.count - 1)
+                                        showDalayButtonWith = 0.0001 //修改成iOS14的样式
+
                                     }
                                     else {
-                                        showDalayButtonWith = -slot.buttonWidth * CGFloat(slot.slots.count - 1)
+                                        offset = -frameWidth
+//                                        showDalayButtonWith = -(slot.buttonWidth * CGFloat(slot.slots.count - 1))
+                                        showDalayButtonWith = -0.0001
+                                       
                                     }
                                 }
+                                if buttons[i].feedback {
+                                        successFeedBack(swipeCellStyle.vibrationForDestructive)
                                 }
+                                }
+                                else {
                                 if buttons[i].feedback {
                                     successFeedBack(swipeCellStyle.vibrationForButton)
+                                }
                                 }
                                 buttons[i].action()
                                 if !(slot.slotStyle == .destructiveDelay && i == slot.slots.count - 1) {
@@ -251,7 +262,7 @@ struct SwipeCellModifier:ViewModifier{
                     ForEach(0..<buttons.count ,id:\.self){ i in
                         if slot.slotStyle == .destructiveDelay && i == buttons.count - 1 {
                         slotView(slot: slot, i: i, position: position)
-                            .offset(x:cellOffset(i: i, count: buttons.count, position: position,width: frame.width,slot:slot) + showDalayButtonWith)
+                            .offset(x: showDalayButtonWith != 0 ? showDalayButtonWith : cellOffset(i: i, count: buttons.count, position: position,width: frame.width,slot:slot))
                             .zIndex(Double(i))
                         }
                         else {
