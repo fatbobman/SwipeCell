@@ -70,8 +70,8 @@ extension SwipeCellModifier{
         }
         .onChange(of:offset){ offset in
             //当前向右
-            if offset > 0 {
-                guard let leftSlot = leftSlot,leftSlot.slots.count == 1,leftSlot.slotStyle == .destructive else {return}
+            if offset > 0 && leftSlot?.slots.count == 1 && leftSlot?.slotStyle == .destructive{
+                guard let leftSlot = leftSlot else {return}
                 if leftSlot.slotStyle == .destructive && leftSlot.slots.count == 1 {
                     if feedStatus == .feedOnce {
                         withAnimation(.easeInOut){
@@ -86,8 +86,8 @@ extension SwipeCellModifier{
                 }
             }
             //当前向左
-            if offset < 0 {
-                guard let rightSlot = rightSlot ,rightSlot.slots.count == 1,rightSlot.slotStyle == .destructive else {return}
+            if offset < 0 && rightSlot?.slots.count == 1 && rightSlot?.slotStyle == .destructive{
+                guard let rightSlot = rightSlot else {return}
                 if rightSlot.slotStyle == .destructive && rightSlot.slots.count == 1 {
                 if feedStatus == .feedOnce {
                     withAnimation(.easeInOut){
