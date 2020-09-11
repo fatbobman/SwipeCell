@@ -28,6 +28,7 @@ extension SwipeCellModifier{
                     if cellPosition == .right{width = min(0,width)}
                     
                     //向右侧滑动
+                    print(leftSlot?.slotStyle)
                     if width > 0 {
                         if leftSlot?.slotStyle == .destructive {
                             //确保只在经过时震动一次,如果未释放,返回时还会震动一次,但并不激发action
