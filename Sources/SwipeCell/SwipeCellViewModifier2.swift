@@ -68,40 +68,40 @@ extension SwipeCellModifier{
         .onReceive(timer){_ in
             resetStatus()
         }
-//        .onChange(of:offset){ offset in
-//            //当前向右
-//            if offset > 0 {
-//                guard let leftSlot = leftSlot else {return}
-//                if leftSlot.slotStyle == .destructive && leftSlot.slots.count == 1 {
-//                    if feedStatus == .feedOnce {
-//                        withAnimation(.easeInOut){
-//                            spaceWidth = offset - leftSlot.buttonWidth
-//                        }
-//                    }
-//                    if feedStatus == .feedAgain {
-//                        withAnimation(.easeInOut){
-//                            spaceWidth = 0
-//                        }
-//                    }
-//                }
-//            }
-//            //当前向左
-//            if offset < 0{
-//                guard let rightSlot = rightSlot else {return}
-//                if rightSlot.slotStyle == .destructive && rightSlot.slots.count == 1 {
-//                if feedStatus == .feedOnce {
-//                    withAnimation(.easeInOut){
-//                        spaceWidth = -(abs(offset) - rightSlot.buttonWidth)
-//                    }
-//                }
-//                if feedStatus == .feedAgain {
-//                    withAnimation(.easeInOut){
-//                        spaceWidth = 0
-//                    }
-//                }
-//                }
-//            }
-//        }
+        .onChange(of:offset){ offset in
+            //当前向右
+            if offset > 0 {
+                guard let leftSlot = leftSlot,leftSlot.slots.count == 1,leftSlot.slotStyle == .destructive else {return}
+                if leftSlot.slotStyle == .destructive && leftSlot.slots.count == 1 {
+                    if feedStatus == .feedOnce {
+                        withAnimation(.easeInOut){
+                            spaceWidth = offset - leftSlot.buttonWidth
+                        }
+                    }
+                    if feedStatus == .feedAgain {
+                        withAnimation(.easeInOut){
+                            spaceWidth = 0
+                        }
+                    }
+                }
+            }
+            //当前向左
+            if offset < 0 {
+                guard let rightSlot = rightSlot ,rightSlot.slots.count == 1,rightSlot.slotStyle == .destructive else {return}
+                if rightSlot.slotStyle == .destructive && rightSlot.slots.count == 1 {
+                if feedStatus == .feedOnce {
+                    withAnimation(.easeInOut){
+                        spaceWidth = -(abs(offset) - rightSlot.buttonWidth)
+                    }
+                }
+                if feedStatus == .feedAgain {
+                    withAnimation(.easeInOut){
+                        spaceWidth = 0
+                    }
+                }
+                }
+            }
+        }
 
         .listRowInsets(EdgeInsets())
         
