@@ -68,7 +68,8 @@ extension SwipeCellModifier{
         .onReceive(timer){_ in
             resetStatus()
         }
-        .onChange(of:offset){ offset in
+        .ifIs((leftSlot?.slots.count == 1 && leftSlot?.slotStyle == .destructive) || (rightSlot?.slots.count == 1 && rightSlot?.slotStyle == .destructive) ){
+        $0.onChange(of:offset){ offset in
             //当前向右
             if offset > 0 && leftSlot?.slots.count == 1 && leftSlot?.slotStyle == .destructive{
                 guard let leftSlot = leftSlot else {return}
@@ -101,6 +102,7 @@ extension SwipeCellModifier{
                 }
                 }
             }
+        }
         }
 
         .listRowInsets(EdgeInsets())
