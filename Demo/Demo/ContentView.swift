@@ -48,7 +48,7 @@ struct ContentView: View {
         
         return
             NavigationView{
-                List{
+                LazyVStack{
                     demo1()
                         .onTapGesture {
                             print("test")
@@ -99,6 +99,7 @@ struct ContentView: View {
                         Text("id:\(i)")
                             .swipeCell(cellPosition: .both, leftSlot: slot1, rightSlot: slot1)
                     }
+
 
                 }
                 .navigationBarTitle("SwipeCell Demo",displayMode: .inline)
