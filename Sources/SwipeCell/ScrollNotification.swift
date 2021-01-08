@@ -1,10 +1,11 @@
 //  Created by Yang Xu on 2020/8/4.
 //
 
-import Foundation
-import SwiftUI
-import Introspect
 import Combine
+import Foundation
+import Introspect
+import SwiftUI
+import UIKit
 
 /*
  dismissSwipeCellFast响应及时,不过会产生和SwiftUI List的一些冲突,
@@ -13,36 +14,37 @@ import Combine
 总之,如果如果你不很清楚,那么就使用dismissSwipeCell
 */
 //MARK: dismissList1 not suggest now
-extension View{
-    public func dismissSwipeCellFast() -> some View{
+extension View {
+    public func dismissSwipeCellFast() -> some View {
         self
-            .modifier(ScrollNotificationInject(showSelection:false))
+            .modifier(ScrollNotificationInject(showSelection: false))
     }
 }
 
-struct ScrollNotificationInject:ViewModifier{
-    var showSelection:Bool
+struct ScrollNotificationInject: ViewModifier {
+    var showSelection: Bool
     @ObservedObject var delegate = Delegate()
     func body(content: Content) -> some View {
         content
-            .introspectTableView{ list in
+            .introspectTableView { list in
                 list.delegate = delegate
                 list.allowsSelection = showSelection
             }
     }
 }
 
-import UIKit
-class Delegate:NSObject,UITableViewDelegate, UIScrollViewDelegate,ObservableObject{
+class Delegate: NSObject, UITableViewDelegate, UIScrollViewDelegate, ObservableObject {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         NotificationCenter.default.post(name: .swipeCellReset, object: nil)
     }
-    
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView){
+
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         NotificationCenter.default.post(name: .swipeCellReset, object: nil)
     }
-    
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle{
+
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath)
+        -> UITableViewCell.EditingStyle
+    {
         return UITableViewCell.EditingStyle.none
     }
 }
@@ -50,28 +52,28 @@ class Delegate:NSObject,UITableViewDelegate, UIScrollViewDelegate,ObservableObje
 //MARK: dismissList
 //这个版本对于SwiftUI的List支持更好一点(可以支持选择),.不过响应稍有延迟.另外,屏幕上的Cell必须要滚动至少一个才能开始dismiss
 //如果在ForEach上使用了onDelete,系统会自动在Cell右侧添加删除按钮替代自定义的swipeButton.
-struct ScrollNotificationWithoutInject:ViewModifier{
-    let timeInterval:Double
+struct ScrollNotificationWithoutInject: ViewModifier {
+    let timeInterval: Double
     @State var timer = Timer.publish(every: 0.5, on: .main, in: .common)
-    @State var cancellable:Set<AnyCancellable> = []
+    @State var cancellable: Set<AnyCancellable> = []
     @State var listView = UITableView()
-    @State var hashValue:Int? = nil
-    
+    @State var hashValue: Int? = nil
+
     func body(content: Content) -> some View {
         content
-            .introspectTableView{ listView in
-                
+            .introspectTableView { listView in
+
                 self.listView = listView
             }
-            .onAppear{
+            .onAppear {
                 timer = Timer.publish(every: timeInterval, on: .main, in: .common)
                 timer.connect()
                     .store(in: &cancellable)
             }
-            .onDisappear{
+            .onDisappear {
                 cancellable = []
             }
-            .onReceive(timer){ _ in
+            .onReceive(timer) { _ in
                 if hashValue == nil {
                     hashValue = listView.visibleCells.first.hashValue
                 }
@@ -83,34 +85,33 @@ struct ScrollNotificationWithoutInject:ViewModifier{
     }
 }
 
-extension View{
-    public func dismissSwipeCell(timeInterval:Double = 0.5) -> some View{
+extension View {
+    public func dismissSwipeCell(timeInterval: Double = 0.5) -> some View {
         self
             .modifier(ScrollNotificationWithoutInject(timeInterval: timeInterval))
     }
 }
 
-
 //ScrollView使用的dismiss.当前在ios13下使用没有问题,不过Introspect在iOS14的beta下无法获取数据.相信过段时间便能修复.
-struct ScrollNotificationForScrollViewInject:ViewModifier{
+struct ScrollNotificationForScrollViewInject: ViewModifier {
     @State var timer = Timer.publish(every: 0.5, on: .main, in: .common)
-    @State var cancellable:Set<AnyCancellable> = []
+    @State var cancellable: Set<AnyCancellable> = []
     @State var scrollView = UIScrollView()
-    @State var offset:CGPoint? = nil
+    @State var offset: CGPoint? = nil
     func body(content: Content) -> some View {
         content
-            .introspectScrollView{scrollView in
+            .introspectScrollView { scrollView in
                 self.scrollView = scrollView
             }
-            .onAppear{
+            .onAppear {
                 timer = Timer.publish(every: 1, on: .main, in: .common)
                 timer.connect()
                     .store(in: &cancellable)
             }
-            .onDisappear{
+            .onDisappear {
                 cancellable = []
             }
-            .onReceive(timer){ _ in
+            .onReceive(timer) { _ in
                 if offset == nil {
                     offset = scrollView.contentOffset
                 }
@@ -122,23 +123,23 @@ struct ScrollNotificationForScrollViewInject:ViewModifier{
     }
 }
 
-extension View{
-    public func dismissSwipeCellForScrollViewInject() -> some View{
+extension View {
+    public func dismissSwipeCellForScrollViewInject() -> some View {
         self
             .modifier(ScrollNotificationForScrollViewInject())
     }
 }
 
-public func dismissDestructiveDelayButton(){
+public func dismissDestructiveDelayButton() {
     NotificationCenter.default.post(name: .swipeCellReset, object: nil)
 }
 
 //MARK: DismissScrollView for VStack
-struct TopLeadingY:Equatable{
-    let topLeadingY:CGFloat
+struct TopLeadingY: Equatable {
+    let topLeadingY: CGFloat
 }
 
-struct ScrollViewPreferencKey:PreferenceKey{
+struct ScrollViewPreferencKey: PreferenceKey {
     typealias Value = [TopLeadingY]
     static var defaultValue: Value = []
     static func reduce(value: inout Value, nextValue: () -> Value) {
@@ -146,17 +147,20 @@ struct ScrollViewPreferencKey:PreferenceKey{
     }
 }
 
-struct DismissSwipeCellForScrollView:ViewModifier{
-    @State var topleadingY:CGFloat? = nil
+struct DismissSwipeCellForScrollView: ViewModifier {
+    @State var topleadingY: CGFloat? = nil
     func body(content: Content) -> some View {
-        GeometryReader{ proxy in
-            ZStack{
+        GeometryReader { proxy in
+            ZStack {
                 Color.clear
                 content
-                .preference(key: ScrollViewPreferencKey.self,value:[TopLeadingY(topLeadingY:proxy.frame(in: .global).minY)])
+                    .preference(
+                        key: ScrollViewPreferencKey.self,
+                        value: [TopLeadingY(topLeadingY: proxy.frame(in: .global).minY)]
+                    )
             }
         }
-        .onPreferenceChange(ScrollViewPreferencKey.self){ preference in
+        .onPreferenceChange(ScrollViewPreferencKey.self) { preference in
             if topleadingY == nil {
                 topleadingY = preference.first!.topLeadingY
             }
@@ -164,14 +168,14 @@ struct DismissSwipeCellForScrollView:ViewModifier{
                 NotificationCenter.default.post(name: .swipeCellReset, object: nil)
             }
             else {
-            topleadingY = preference.first!.topLeadingY
+                topleadingY = preference.first!.topLeadingY
             }
         }
     }
 }
 
-extension View{
-    public func dismissSwipeCellForScrollView() -> some View{
+extension View {
+    public func dismissSwipeCellForScrollView() -> some View {
         self
             .modifier(DismissSwipeCellForScrollView())
     }
@@ -179,11 +183,11 @@ extension View{
 
 //MARK: DismissScrollView for LazyVStack
 //LazyVStack的实现目前没有太好的方案.个别情况下会打断滑动按钮的出现动画
-struct CellInfo:Equatable{
-    let id:UUID
+struct CellInfo: Equatable {
+    let id: UUID
 }
 
-struct ScrollViewPreferencKeyForLazy:PreferenceKey{
+struct ScrollViewPreferencKeyForLazy: PreferenceKey {
     typealias Value = [CellInfo]
     static var defaultValue: Value = []
     static func reduce(value: inout Value, nextValue: () -> Value) {
@@ -191,37 +195,53 @@ struct ScrollViewPreferencKeyForLazy:PreferenceKey{
     }
 }
 
-struct DismissSwipeCellForScrollViewForLazy:ViewModifier{
-    @State var cellinfos:[CellInfo] = []
+struct DismissSwipeCellForScrollViewForLazy: ViewModifier {
+    @State var cellinfos: [CellInfo] = []
     func body(content: Content) -> some View {
-                content
-                    .background(
-                        GeometryReader{proxy in
-                            Color.clear
-                                .preference(key: ScrollViewPreferencKeyForLazy.self,value:[CellInfo(id: UUID())])
-                        }
-                    )
-        .onPreferenceChange(ScrollViewPreferencKeyForLazy.self){ preference in
-            if cellinfos.count == 0 {
-                DispatchQueue.main.async {
-                    cellinfos = preference
+        content
+            .background(
+                GeometryReader { proxy in
+                    Color.clear
+                        .preference(
+                            key: ScrollViewPreferencKeyForLazy.self,
+                            value: [CellInfo(id: UUID())]
+                        )
+                }
+            )
+            .onPreferenceChange(ScrollViewPreferencKeyForLazy.self) { preference in
+                if cellinfos.count == 0 {
+                    DispatchQueue.main.async {
+                        cellinfos = preference
+                    }
+                }
+                if cellinfos != preference {
+                    NotificationCenter.default.post(name: .swipeCellReset, object: nil)
+                }
+                else {
+                    DispatchQueue.main.async {
+                        cellinfos = preference
+                    }
                 }
             }
-            if cellinfos != preference {
-                NotificationCenter.default.post(name: .swipeCellReset, object: nil)
-            }
-            else {
-                DispatchQueue.main.async {
-                    cellinfos = preference
-                }
-            }
-        }
     }
 }
 
-extension View{
-    public func dismissSwipeCellForScrollViewForLazyVStack() -> some View{
+extension View {
+    public func dismissSwipeCellForScrollViewForLazyVStack() -> some View {
         self
             .modifier(DismissSwipeCellForScrollViewForLazy())
+    }
+}
+
+public struct CellStatusKey: EnvironmentKey {
+    public static var defaultValue: CellStatus = .showCell
+}
+
+extension EnvironmentValues {
+    public var cellStatus: CellStatus {
+        get { self[CellStatusKey.self] }
+        set {
+            self[CellStatusKey.self] = newValue
+        }
     }
 }
