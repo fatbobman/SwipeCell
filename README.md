@@ -106,6 +106,24 @@ ScrollView{
 }
 ```
 
+Get Cell Status
+```swift
+HStack{
+    Text("Cell Status:")
+    Text(status.rawValue)
+        .foregroundColor(.red)
+        //get the cell status from Environment
+        .transformEnvironment(\.cellStatus, transform: { cellStatus in
+            let temp = cellStatus
+            DispatchQueue.main.async {
+                self.status = temp
+            }
+        })
+}
+.frame(maxWidth:.infinity,alignment: .center)
+.frame(height:100)
+.swipeCell(cellPosition: .both, leftSlot: slot, rightSlot: slot)
+```
 
 
 * dismissSwipeCell 在editmode下支持选择

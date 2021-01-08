@@ -75,13 +75,6 @@ extension Notification.Name {
     public static let swipeCellReset = Notification.Name("com.swipeCell.reset")
 }
 
-extension View {
-    public func debug() -> Self {
-        print(Mirror(reflecting: self).subjectType)
-        return self
-    }
-}
-
 public struct CellStatusKey: EnvironmentKey {
     public static var defaultValue: CellStatus = .showCell
 }
