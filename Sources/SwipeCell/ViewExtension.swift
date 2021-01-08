@@ -82,3 +82,15 @@ extension View {
     }
 }
 
+public struct CellStatusKey: EnvironmentKey {
+    public static var defaultValue: CellStatus = .showCell
+}
+
+extension EnvironmentValues {
+    public var cellStatus: CellStatus {
+        get { self[CellStatusKey.self] }
+        set {
+            self[CellStatusKey.self] = newValue
+        }
+    }
+}
