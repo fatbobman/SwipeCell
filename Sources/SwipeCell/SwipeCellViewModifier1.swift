@@ -209,6 +209,9 @@ struct SwipeCellModifier: ViewModifier {
                         buttons[i].action()
                     }
                 }
+                else {
+                    buttons[i].action()
+                }
 
                 if !(slot.slotStyle == .destructiveDelay && i == slot.slots.count - 1) {
                     resetStatus()
