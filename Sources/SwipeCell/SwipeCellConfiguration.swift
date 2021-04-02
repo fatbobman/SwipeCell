@@ -11,7 +11,7 @@ public enum SwipeCellSlotPosition: Int {
 }
 
 public enum SwipeCellSlotStyle {
-    case normal, destructive, destructiveDelay
+    case normal, destructive, destructiveDelay, delay
 }
 
 public enum SwipeButtonStyle {
