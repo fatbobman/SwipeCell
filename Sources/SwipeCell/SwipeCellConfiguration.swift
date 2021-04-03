@@ -58,19 +58,22 @@ public struct SwipeCellSlot {
     public let slotStyle: SwipeCellSlotStyle  //是否包含销毁按钮,销毁按钮只能是最后一个添加
     public let appearAnimation: Animation
     public let dismissAnimation: Animation
+    public let showAction: (() -> Void)?
 
     public init(
         slots: [SwipeCellButton],
         slotStyle: SwipeCellSlotStyle = .normal,
         buttonWidth: CGFloat = 74,
         appearAnimation: Animation = .easeOut(duration: 0.5),
-        dismissAnimation: Animation = .interactiveSpring()
+        dismissAnimation: Animation = .interactiveSpring(),
+        showAction: (() -> Void)? = nil
     ) {
         self.buttonWidth = buttonWidth
         self.slots = slots
         self.slotStyle = slotStyle
         self.appearAnimation = appearAnimation
         self.dismissAnimation = dismissAnimation
+        self.showAction = showAction
     }
 
 }

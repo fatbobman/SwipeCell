@@ -159,7 +159,10 @@ struct ContentView: View {
                                 secondaryButton: .cancel({ dismissDestructiveDelayButton() })
                             )
                         }
+                    Group{
                     DemoShowStatus()
+                    DoSomethingWithoutPress()
+                    }
 
                     NavigationLink("ScrollView LazyVStack", destination: demo9())
                     NavigationLink("ScrollView single Cell", destination: Demo8())
@@ -452,5 +455,37 @@ struct DemoShowStatus:View{
         .frame(maxWidth:.infinity,alignment: .center)
         .frame(height:100)
         .swipeCell(cellPosition: .both, leftSlot: slot, rightSlot: slot)
+    }
+}
+
+struct DoSomethingWithoutPress:View{
+    let button = SwipeCellButton(
+        buttonStyle: .titleAndImage,
+        title: "Mark",
+        systemImage: "bookmark",
+        titleColor: .white,
+        imageColor: .white,
+        view: nil,
+        backgroundColor: .green,
+        action: { },
+        feedback: true
+    )
+
+    var slotLeft:SwipeCellSlot{
+        SwipeCellSlot(slots: [button],showAction: {print("do something Left")})
+    }
+
+    var slotRight:SwipeCellSlot{
+        SwipeCellSlot(slots: [button],showAction: {print("do something Right")})
+    }
+
+
+    var body: some View{
+        HStack{
+            Text("Do something without press")
+        }
+        .frame(maxWidth:.infinity,alignment: .center)
+        .frame(height:100)
+        .swipeCell(cellPosition: .both, leftSlot: slotLeft, rightSlot: slotRight)
     }
 }

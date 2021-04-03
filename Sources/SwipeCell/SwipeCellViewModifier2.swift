@@ -60,6 +60,16 @@ extension SwipeCellModifier {
         .ifIs(clip) {
             $0.clipShape(Rectangle())
         }
+        .onChange(of: status){ status in
+            switch status {
+            case .showLeftSlot:
+                leftSlot?.showAction?()
+            case .showRightSlot:
+                rightSlot?.showAction?()
+            case .showCell:
+                break
+            }
+        }
         .onReceive(resetNotice) { notice in
             //            if status == .showCell {return}
             //如果其他的cell发送通知或者list发送通知,则本cell复位
