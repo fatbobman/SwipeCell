@@ -448,7 +448,17 @@ struct DemoShowStatus:View{
                 .transformEnvironment(\.cellStatus, transform: { cellStatus in
                     let temp = cellStatus
                     DispatchQueue.main.async {
+                        if self.status != temp {
                         self.status = temp
+                        switch self.status{
+                        case .showRightSlot:
+                            print("do right action")
+                        case .showLeftSlot:
+                            print("do left action")
+                        case .showCell:
+                            break
+                        }
+                        }
                     }
                 })
         }
