@@ -9,7 +9,7 @@ extension SwipeCellModifier {
     func getGesture() -> _EndedGesture<_ChangedGesture<DragGesture>> {
         //为了避免editMode切换时的异常动画,所以在进入editmode后仍然继续绘制Slots,只是对手势做了处理,避免了滑动
         return DragGesture(
-            minimumDistance: editMode?.wrappedValue == .active ? 10000 : 0,
+            minimumDistance: editMode?.wrappedValue == .active ? 10000 : 2,
             coordinateSpace: .local
         )
         .onChanged { value in

@@ -39,10 +39,10 @@ extension SwipeCellModifier {
                         .environment(\.cellStatus, status)
                 }
                 .zIndex(3)
-//                .highPriorityGesture(
-//                    TapGesture(count: 1),
-//                    including: currentCellID == nil ? .subviews : .none
-//                )
+                .highPriorityGesture(
+                    TapGesture(count: 1),
+                    including: currentCellID == nil ? .subviews : .none
+                )
                 .contentShape(Rectangle())
                 //解决Button冲突问题.
                 .offset(x: offset)
