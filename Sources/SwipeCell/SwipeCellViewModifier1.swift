@@ -203,7 +203,16 @@ struct SwipeCellModifier: ViewModifier {
                         successFeedBack(swipeCellStyle.vibrationForButton)
                     }
                 }
-                buttons[i].action()
+
+                if slot.slotStyle == .delay {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        buttons[i].action()
+                    }
+                }
+                else {
+                    buttons[i].action()
+                }
+
                 if !(slot.slotStyle == .destructiveDelay && i == slot.slots.count - 1) {
                     resetStatus()
                 }
