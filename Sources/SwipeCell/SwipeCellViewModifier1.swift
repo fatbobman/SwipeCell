@@ -15,6 +15,7 @@ struct SwipeCellModifier: ViewModifier {
     let rightSlot: SwipeCellSlot?
     let swipeCellStyle: SwipeCellStyle
     let clip: Bool
+    let cellOnTap: (() -> Void)?
 
     @State var status: CellStatus = .showCell
     @State var showDalayButtonWith: CGFloat = 0
@@ -60,13 +61,15 @@ struct SwipeCellModifier: ViewModifier {
         leftSlot: SwipeCellSlot?,
         rightSlot: SwipeCellSlot?,
         swipeCellStyle: SwipeCellStyle,
-        clip: Bool
+        clip: Bool,
+        cellOnTap: (()-> Void)? = nil
     ) {
         _cellPosition = State(wrappedValue: cellPosition)
         self.clip = clip
         self.leftSlot = leftSlot
         self.rightSlot = rightSlot
         self.swipeCellStyle = swipeCellStyle
+        self.cellOnTap = cellOnTap
     }
 
     func buttonView(_ slot: SwipeCellSlot, _ i: Int) -> some View {

@@ -45,18 +45,22 @@ extension SwipeCellModifier {
                 )
                 .contentShape(Rectangle())
                 //解决Button冲突问题.
-                .onTapGesture(
-                    count: currentCellID != nil ? 1 : 4,
-                    perform: {
-                        resetStatus()
-                        dismissNotification()
-                    }
-                )
                 .offset(x: offset)
             }
         }
         .contentShape(Rectangle())
         .gesture(getGesture())
+        .onTapGesture(
+            count: 1,
+            perform: {
+                if currentCellID != nil {
+                    resetStatus()
+                    dismissNotification()
+                } else {
+                    cellOnTap?()
+                }
+            }
+        )
         .ifIs(clip) {
             $0.clipShape(Rectangle())
         }

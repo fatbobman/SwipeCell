@@ -11,6 +11,7 @@ extension View {
         rightSlot: SwipeCellSlot?,
         swipeCellStyle: SwipeCellStyle = .defaultStyle(),
         clip: Bool = true,
+        cellOnTap:(()-> Void)? = nil,
         disable: Bool = false
     ) -> some View {
         var d = disable
@@ -30,7 +31,8 @@ extension View {
                             leftSlot: leftSlot,
                             rightSlot: rightSlot,
                             swipeCellStyle: swipeCellStyle,
-                            clip: clip
+                            clip: clip,
+                            cellOnTap: cellOnTap
                         )
                     )
 
