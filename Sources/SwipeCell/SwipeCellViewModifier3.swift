@@ -17,7 +17,7 @@ extension SwipeCellModifier {
             cancellables.removeAll()  //只要移动,定时清零
             
             // A gesture happened so don't reset
-            self.shouldReseStatusOnAppear = false
+            self.shouldResetStatusOnAppear = false
 
             if currentCellID != cellID {
                 currentCellID = cellID

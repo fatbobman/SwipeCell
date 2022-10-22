@@ -68,7 +68,7 @@ extension SwipeCellModifier {
                 break
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + initialStatusResetDelay) {
-                if shouldReseStatusOnAppear {
+                if shouldResetStatusOnAppear {
                     resetStatus()
                 }
             }
@@ -163,7 +163,7 @@ extension SwipeCellModifier {
         cancellables.removeAll()
         currentCellID = nil
         // since we reset, we won't have to do it again
-        shouldReseStatusOnAppear = false
+        shouldResetStatusOnAppear = false
 
     }
 

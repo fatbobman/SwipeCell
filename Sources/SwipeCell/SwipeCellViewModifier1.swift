@@ -16,7 +16,7 @@ struct SwipeCellModifier: ViewModifier {
     let swipeCellStyle: SwipeCellStyle
     let clip: Bool
     /// If the status should be reset
-    @State var shouldReseStatusOnAppear = true
+    @State var shouldResetStatusOnAppear = true
     /// The amount of time it should take to reset the status on appear
     let initialStatusResetDelay: TimeInterval
 
