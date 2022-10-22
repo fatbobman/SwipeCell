@@ -46,21 +46,17 @@ extension View {
 }
 
 extension View {
-    public func _hidden(_ condition: Bool) -> some View {
+    @ViewBuilder public func _hidden(_ condition: Bool) -> some View {
         Group {
             if condition {
-                AnyView(self)
+                self
             }
             else {
-                AnyView(EmptyView())
+                EmptyView()
             }
         }
     }
-    
-    func toAnyView() -> AnyView {
-        AnyView(self)
-    }
-    
+
     @ViewBuilder func ifIs<T>(_ condition: Bool, transform: (Self) -> T) -> some View
     where T: View {
         if condition {
@@ -70,7 +66,7 @@ extension View {
             self
         }
     }
-    
+
     func doSomething(_ action: () -> Void) -> some View {
         action()
         return self

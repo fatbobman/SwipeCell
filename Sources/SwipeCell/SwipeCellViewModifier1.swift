@@ -85,41 +85,35 @@ struct SwipeCellModifier: ViewModifier {
         self.initialStatusResetDelay = initialStatusResetDelay
     }
 
-    func buttonView(_ slot: SwipeCellSlot, _ i: Int) -> some View {
+    func emptyView(_ button: SwipeCellButton) -> some View {
+        Text("nil").foregroundColor(button.titleColor)
+    }
+
+    @ViewBuilder func buttonView(_ slot: SwipeCellSlot, _ i: Int) -> some View {
         let button = slot.slots[i]
         let viewStyle = button.buttonStyle
-
-        func emptyView() -> AnyView {
-            AnyView(
-                Text("nil").foregroundColor(button.titleColor)
-            )
-        }
+        let emptyView = emptyView(button)
 
         switch viewStyle {
         case .image:
-            guard let image = button.systemImage else {
-                return emptyView()
-            }
-            return AnyView(
+            if let image = button.systemImage {
                 Image(systemName: image)
                     .font(.system(size: 23))
                     .foregroundColor(button.imageColor)
-            )
-        case .title:
-            guard let title = button.title else {
-                return emptyView()
+            } else {
+                emptyView
             }
-            return AnyView(
+        case .title:
+            if let title = button.title {
                 Text(title)
                     .font(.callout)
                     .bold()
                     .foregroundColor(button.titleColor)
-            )
-        case .titleAndImage:
-            guard let title = button.title, let image = button.systemImage else {
-                return emptyView()
+            } else {
+                emptyView
             }
-            return AnyView(
+        case .titleAndImage:
+            if let title = button.title, let image = button.systemImage {
                 VStack(spacing: 5) {
                     Image(systemName: image)
                         .font(.system(size: 23))
@@ -129,13 +123,15 @@ struct SwipeCellModifier: ViewModifier {
                         .bold()
                         .foregroundColor(button.titleColor)
                 }
-            )
-
-        case .view:
-            guard let view = button.view else {
-                return emptyView()
+            } else {
+                emptyView
             }
-            return view()
+        case .view:
+            if let view = button.view {
+                view()
+            } else {
+                emptyView
+            }
         }
     }
 
@@ -235,13 +231,13 @@ struct SwipeCellModifier: ViewModifier {
             }
     }
 
-    func loadButtons(_ slot: SwipeCellSlot, position: SwipeCellSlotPosition, frame: CGRect)
-        -> some View
+    @ViewBuilder func loadButtons(_ slot: SwipeCellSlot, position: SwipeCellSlotPosition, frame: CGRect)
+    -> some View
     {
         let buttons = slot.slots
 
         if slot.slotStyle == .destructive && leftOffset == -10000 && position == .left {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            let _ = DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 leftOffset = cellOffset(
                     i: buttons.count - 1,
                     count: buttons.count,
@@ -253,7 +249,7 @@ struct SwipeCellModifier: ViewModifier {
         }
 
         if slot.slotStyle == .destructive && rightOffset == 10000 && position == .right {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            let _ = DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 rightOffset = cellOffset(
                     i: buttons.count - 1,
                     count: buttons.count,
@@ -265,91 +261,89 @@ struct SwipeCellModifier: ViewModifier {
         }
 
         if slot.slotStyle == .destructive {
-            //单button的销毁按钮
-            if buttons.count == 1 {
-                return AnyView(
-                    slotView(slot: slot, i: 0, position: position)
+            destructiveButtons(slot, position: position, frame: frame)
+        }
+        else {
+            ZStack {
+                ForEach(0..<buttons.count, id: \.self) { i in
+                    if slot.slotStyle == .destructiveDelay && i == buttons.count - 1 {
+                        slotView(slot: slot, i: i, position: position)
+                            .offset(
+                                x: showDalayButtonWith != 0
+                                ? showDalayButtonWith
+                                : cellOffset(
+                                    i: i,
+                                    count: buttons.count,
+                                    position: position,
+                                    width: frame.width,
+                                    slot: slot
+                                )
+                            )
+                            .zIndex(Double(i))
+                    }
+                    else {
+                        slotView(slot: slot, i: i, position: position)
+                            .offset(
+                                x: cellOffset(
+                                    i: i,
+                                    count: buttons.count,
+                                    position: position,
+                                    width: frame.width,
+                                    slot: slot
+                                )
+                            )
+                            .zIndex(Double(i))
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder private func destructiveButtons(_ slot: SwipeCellSlot, position: SwipeCellSlotPosition, frame: CGRect) -> some View {
+        let buttons = slot.slots
+        //单button的销毁按钮
+        if buttons.count == 1 {
+            slotView(slot: slot, i: 0, position: position)
+                .offset(
+                    x: cellOffset(
+                        i: 0,
+                        count: buttons.count,
+                        position: position,
+                        width: frame.width,
+                        slot: slot
+                    )
+                )
+        }
+        else {
+            ZStack {
+                ForEach(0..<buttons.count - 1, id: \.self) { i in
+                    slotView(slot: slot, i: i, position: position)
                         .offset(
                             x: cellOffset(
-                                i: 0,
+                                i: i,
                                 count: buttons.count,
                                 position: position,
                                 width: frame.width,
                                 slot: slot
                             )
                         )
-                )
-            }
-            else {
-                return AnyView(
-                    ZStack {
-                        ForEach(0..<buttons.count - 1, id: \.self) { i in
-                            slotView(slot: slot, i: i, position: position)
-                                .offset(
-                                    x: cellOffset(
-                                        i: i,
-                                        count: buttons.count,
-                                        position: position,
-                                        width: frame.width,
-                                        slot: slot
-                                    )
-                                )
-                                .zIndex(Double(i))
-                        }
-                        //销毁按钮
-                        if slot.slotStyle == .destructive && position == .left {
-                            slotView(slot: slot, i: buttons.count - 1, position: .left)
-                                .zIndex(10)
-                                .offset(x: leftOffset)
-
-                        }
-
-                        if slot.slotStyle == .destructive && position == .right {
-                            slotView(slot: slot, i: buttons.count - 1, position: .right)
-                                .offset(x: rightOffset)
-                                .zIndex(10)
-
-                        }
-                    }
-                )
-            }
-        }
-        else {
-
-            return AnyView(
-                ZStack {
-                    ForEach(0..<buttons.count, id: \.self) { i in
-                        if slot.slotStyle == .destructiveDelay && i == buttons.count - 1 {
-                            slotView(slot: slot, i: i, position: position)
-                                .offset(
-                                    x: showDalayButtonWith != 0
-                                        ? showDalayButtonWith
-                                        : cellOffset(
-                                            i: i,
-                                            count: buttons.count,
-                                            position: position,
-                                            width: frame.width,
-                                            slot: slot
-                                        )
-                                )
-                                .zIndex(Double(i))
-                        }
-                        else {
-                            slotView(slot: slot, i: i, position: position)
-                                .offset(
-                                    x: cellOffset(
-                                        i: i,
-                                        count: buttons.count,
-                                        position: position,
-                                        width: frame.width,
-                                        slot: slot
-                                    )
-                                )
-                                .zIndex(Double(i))
-                        }
-                    }
+                        .zIndex(Double(i))
                 }
-            )
+                //销毁按钮
+                if slot.slotStyle == .destructive && position == .left {
+                    slotView(slot: slot, i: buttons.count - 1, position: .left)
+                        .zIndex(10)
+                        .offset(x: leftOffset)
+
+                }
+
+                if slot.slotStyle == .destructive && position == .right {
+                    slotView(slot: slot, i: buttons.count - 1, position: .right)
+                        .offset(x: rightOffset)
+                        .zIndex(10)
+
+                }
+            }
         }
     }
 
@@ -357,7 +351,6 @@ struct SwipeCellModifier: ViewModifier {
         if slot.slotStyle == .destructive && slot.slots.count == 1 {
             switch position {
             case .left:
-                print("left")
                 DispatchQueue.main.async {
                     spaceWidth = 0
                 }
@@ -509,5 +502,4 @@ struct SwipeCellModifier: ViewModifier {
             }
         }
     }
-
 }
