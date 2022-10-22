@@ -57,6 +57,13 @@ extension SwipeCellModifier {
         }
         .contentShape(Rectangle())
         .gesture(getGesture())
+        .onAppear {
+            withAnimation(Animation.default.delay(initialOffsetResetDelay)) {
+                if resetOffsetOnAppear {
+                    offset = 0
+                }
+            }
+        }
         .ifIs(clip) {
             $0.clipShape(Rectangle())
         }

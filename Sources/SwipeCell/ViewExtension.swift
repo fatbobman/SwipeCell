@@ -11,7 +11,9 @@ extension View {
         rightSlot: SwipeCellSlot?,
         swipeCellStyle: SwipeCellStyle = .defaultStyle(),
         clip: Bool = true,
-        disable: Bool = false
+        disable: Bool = false,
+        initalOffset: CGFloat = 0,
+        initialOffsetResetDelay: TimeInterval = 0.0
     ) -> some View {
         var d = disable
         if cellPosition == .none {
@@ -30,7 +32,9 @@ extension View {
                             leftSlot: leftSlot,
                             rightSlot: rightSlot,
                             swipeCellStyle: swipeCellStyle,
-                            clip: clip
+                            clip: clip,
+                            initialOffset: initalOffset,
+                            initialOffsetResetDelay: initialOffsetResetDelay
                         )
                     )
 
