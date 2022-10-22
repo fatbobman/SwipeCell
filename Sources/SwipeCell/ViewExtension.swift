@@ -5,40 +5,42 @@
 import SwiftUI
 
 extension View {
-    public func swipeCell(
+    /// Add a swipe cell modifier to the current view
+    /// - Parameters:
+    ///   - cellPosition: <#cellPosition description#>
+    ///   - leftSlot: <#leftSlot description#>
+    ///   - rightSlot: <#rightSlot description#>
+    ///   - swipeCellStyle: <#swipeCellStyle description#>
+    ///   - clip: <#clip description#>
+    ///   - disable: <#disable description#>
+    ///   - initalStatus: The initial status for the swipe cell. This can be used to assist with onboarding
+    ///   - initialStatusResetDelay: The amount of time in seconds from when the view appears to when the initial status is reset
+    /// - Returns: <#description#>
+    @ViewBuilder public func swipeCell(
         cellPosition: SwipeCellSlotPosition,
         leftSlot: SwipeCellSlot?,
         rightSlot: SwipeCellSlot?,
         swipeCellStyle: SwipeCellStyle = .defaultStyle(),
         clip: Bool = true,
         disable: Bool = false,
-        initalOffset: CGFloat = 0,
-        initialOffsetResetDelay: TimeInterval = 0.0
+        initalStatus: CellStatus = .showCell,
+        initialStatusResetDelay: TimeInterval = 0.0
     ) -> some View {
-        var d = disable
-        if cellPosition == .none {
-            d = true
-        }
-        if d {
-            return AnyView(self.listRowInsets(EdgeInsets()))
-        }
-        else {
-            return
-                AnyView(
-                self
-                    .modifier(
-                        SwipeCellModifier(
-                            cellPosition: cellPosition,
-                            leftSlot: leftSlot,
-                            rightSlot: rightSlot,
-                            swipeCellStyle: swipeCellStyle,
-                            clip: clip,
-                            initialOffset: initalOffset,
-                            initialOffsetResetDelay: initialOffsetResetDelay
-                        )
+        if cellPosition == .none ? true : disable {
+            self.listRowInsets(EdgeInsets())
+        } else {
+            self
+                .modifier(
+                    SwipeCellModifier(
+                        cellPosition: cellPosition,
+                        leftSlot: leftSlot,
+                        rightSlot: rightSlot,
+                        swipeCellStyle: swipeCellStyle,
+                        clip: clip,
+                        initialStatusResetDelay: initialStatusResetDelay,
+                        initialStatus: initalStatus
                     )
-
-            )
+                )
         }
     }
 }
@@ -54,11 +56,11 @@ extension View {
             }
         }
     }
-
+    
     func toAnyView() -> AnyView {
         AnyView(self)
     }
-
+    
     @ViewBuilder func ifIs<T>(_ condition: Bool, transform: (Self) -> T) -> some View
     where T: View {
         if condition {
@@ -68,7 +70,7 @@ extension View {
             self
         }
     }
-
+    
     func doSomething(_ action: () -> Void) -> some View {
         action()
         return self

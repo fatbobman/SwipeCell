@@ -102,7 +102,13 @@ struct ContentView: View {
                     Button(action: { print("button") }) {
                         demo2()
                     }
-                    .swipeCell(cellPosition: .both, leftSlot: slot1, rightSlot: slot1, initalOffset: 74 * 2, initialOffsetResetDelay: 2.0)
+                    .swipeCell(
+                        cellPosition: .both,
+                        leftSlot: slot1,
+                        rightSlot: slot1,
+                        initalStatus: .showLeftSlot,
+                        initialStatusResetDelay: 2.0
+                    )
 
                     demo3()
                         .onTapGesture {

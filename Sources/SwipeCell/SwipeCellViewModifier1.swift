@@ -15,15 +15,15 @@ struct SwipeCellModifier: ViewModifier {
     let rightSlot: SwipeCellSlot?
     let swipeCellStyle: SwipeCellStyle
     let clip: Bool
-    /// If the offset should be reset to 0 onAppaer
-    @State var resetOffsetOnAppear = true
-    /// The amount of time it should take to reset the offset to 0.0 on appear
-    let initialOffsetResetDelay: TimeInterval
+    /// If the status should be reset
+    @State var shouldReseStatusOnAppear = true
+    /// The amount of time it should take to reset the status on appear
+    let initialStatusResetDelay: TimeInterval
 
     @State var status: CellStatus = .showCell
     @State var showDalayButtonWith: CGFloat = 0
 
-    @State var offset: CGFloat
+    @State var offset: CGFloat = 0.0
 
     @State var frameWidth: CGFloat = 99999
     @State var leftOffset: CGFloat = -10000
@@ -65,16 +65,24 @@ struct SwipeCellModifier: ViewModifier {
         rightSlot: SwipeCellSlot?,
         swipeCellStyle: SwipeCellStyle,
         clip: Bool,
-        initialOffset: CGFloat = 0.0,
-        initialOffsetResetDelay: TimeInterval = 0.0
+        initialStatusResetDelay: TimeInterval = 0.0,
+        initialStatus: CellStatus = .showCell
     ) {
+        switch initialStatus {
+        case .showLeftSlot:
+            precondition(cellPosition != .right, "Initial status not supported with a right cell position")
+        case .showRightSlot:
+            precondition(cellPosition != .left, "Initial status not support with a left cell position")
+        default:
+            break
+        }
         _cellPosition = State(wrappedValue: cellPosition)
         self.clip = clip
         self.leftSlot = leftSlot
         self.rightSlot = rightSlot
         self.swipeCellStyle = swipeCellStyle
-        self._offset = State(initialValue: initialOffset)
-        self.initialOffsetResetDelay = initialOffsetResetDelay
+        self._status = State(initialValue: initialStatus)
+        self.initialStatusResetDelay = initialStatusResetDelay
     }
 
     func buttonView(_ slot: SwipeCellSlot, _ i: Int) -> some View {
