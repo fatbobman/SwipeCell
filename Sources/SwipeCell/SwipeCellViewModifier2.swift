@@ -58,9 +58,9 @@ extension SwipeCellModifier {
         .contentShape(Rectangle())
         .gesture(getGesture())
         .onAppear {
-            withAnimation(Animation.default.delay(initialOffsetResetDelay)) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + initialOffsetResetDelay) {
                 if resetOffsetOnAppear {
-                    offset = 0
+                    resetStatus()
                 }
             }
         }
