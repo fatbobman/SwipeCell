@@ -16,7 +16,7 @@ struct SwipeCellModifier: ViewModifier {
     let swipeCellStyle: SwipeCellStyle
     let clip: Bool
     /// If the offset should be reset to 0 onAppaer
-    var resetOffsetOnAppear = true
+    @State var resetOffsetOnAppear = true
     /// The amount of time it should take to reset the offset to 0.0 on appear
     let initialOffsetResetDelay: TimeInterval
 
