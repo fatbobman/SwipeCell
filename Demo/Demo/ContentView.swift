@@ -102,7 +102,7 @@ struct ContentView: View {
                     Button(action: { print("button") }) {
                         demo2()
                     }
-                    .swipeCell(cellPosition: .both, leftSlot: slot1, rightSlot: slot1)
+                    .swipeCell(cellPosition: .both, leftSlot: slot1, rightSlot: slot1, initalOffset: 74 * 2, initialOffsetResetDelay: 2.0)
 
                     demo3()
                         .onTapGesture {
@@ -168,6 +168,9 @@ struct ContentView: View {
                     NavigationLink("ScrollView single Cell", destination: Demo8())
                 }
                 .navigationBarTitle("SwipeCell Demo", displayMode: .inline)
+                .toolbar {
+                    EditButton()
+                }
             }
             .dismissSwipeCell()
             .sheet(isPresented: $showSheet, content: { Text("Hello world") })
