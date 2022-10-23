@@ -58,9 +58,18 @@ extension SwipeCellModifier {
         .contentShape(Rectangle())
         .gesture(getGesture())
         .onAppear {
-            withAnimation(Animation.default.delay(initialOffsetResetDelay)) {
-                if resetOffsetOnAppear {
-                    offset = 0
+            self.setStatus(status)
+            switch status {
+            case .showLeftSlot:
+                offset = leftSlotWidth
+            case .showRightSlot:
+                offset = rightSlotWidth
+            default:
+                break
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + initialStatusResetDelay) {
+                if shouldResetStatusOnAppear {
+                    resetStatus()
                 }
             }
         }
@@ -140,6 +149,7 @@ extension SwipeCellModifier {
         timer.connect().store(in: &cancellables)
     }
 
+    /// Set the status and associated values to ``CellStatus.showCell``
     func resetStatus() {
         status = .showCell
         withAnimation(.easeInOut) {
@@ -152,6 +162,8 @@ extension SwipeCellModifier {
         feedStatus = .none
         cancellables.removeAll()
         currentCellID = nil
+        // since we reset, we won't have to do it again
+        shouldResetStatusOnAppear = false
 
     }
 
