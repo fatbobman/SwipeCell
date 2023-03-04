@@ -43,7 +43,7 @@ extension SwipeCellModifier {
                     TapGesture(count: 1),
                     including: currentCellID == nil ? .subviews : .none
                 )
-                .contentShape(Rectangle())
+                .contentShape(RoundedRectangle(cornerRadius: 28))
                 //解决Button冲突问题.
                 .onTapGesture(
                     count: currentCellID != nil ? 1 : 4,
