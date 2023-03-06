@@ -192,6 +192,7 @@ struct SwipeCellModifier: ViewModifier {
                 }
             )
             .contentShape(RoundedRectangle(cornerRadius: 28))
+            .padding(.horizontal)
             .onTapGesture {
                 if slot.slotStyle == .destructiveDelay && i == slot.slots.count - 1 {
                     withAnimation(.easeInOut) {
@@ -453,7 +454,7 @@ struct SwipeCellModifier: ViewModifier {
 
         var result: CGFloat = 0
 
-        let cellOffset = offset * (CGFloat(1) / CGFloat(count))
+        let cellOffset = offset * (CGFloat(1) / CGFloat(count)) + 10
         if position == .left {
             result = -frameWidth + cellOffset
 
