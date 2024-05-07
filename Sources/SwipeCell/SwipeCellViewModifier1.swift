@@ -138,13 +138,13 @@ struct SwipeCellModifier: ViewModifier {
     func slotView(slot: SwipeCellSlot, i: Int, position: SwipeCellSlotPosition) -> some View {
         let buttons = slot.slots
 
-        return Rectangle()
+        return RoundedRectangle(cornerRadius: 28)
             .fill(buttons[i].backgroundColor)
             .overlay(
                 ZStack(alignment: position == .left ? .trailing : .leading) {
                     Color.clear
                     buttonView(slot, i)
-                        .contentShape(Rectangle())
+                        .contentShape(RoundedRectangle(cornerRadius: 28))
                         .frame(width: slot.buttonWidth)
                         .offset(x: spaceWidth)
                         .alignmentGuide(
@@ -191,7 +191,8 @@ struct SwipeCellModifier: ViewModifier {
 
                 }
             )
-            .contentShape(Rectangle())
+            .contentShape(RoundedRectangle(cornerRadius: 28))
+            .padding(.horizontal)
             .onTapGesture {
                 if slot.slotStyle == .destructiveDelay && i == slot.slots.count - 1 {
                     withAnimation(.easeInOut) {
@@ -453,7 +454,7 @@ struct SwipeCellModifier: ViewModifier {
 
         var result: CGFloat = 0
 
-        let cellOffset = offset * (CGFloat(1) / CGFloat(count))
+        let cellOffset = offset * (CGFloat(1) / CGFloat(count)) + 10
         if position == .left {
             result = -frameWidth + cellOffset
 
