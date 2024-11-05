@@ -43,7 +43,7 @@ extension SwipeCellModifier {
                     TapGesture(count: 1),
                     including: currentCellID == nil ? .subviews : .none
                 )
-                .contentShape(Rectangle())
+                .contentShape(RoundedRectangle(cornerRadius: 28))
                 //解决Button冲突问题.
                 .onTapGesture(
                     count: currentCellID != nil ? 1 : 4,
@@ -55,7 +55,7 @@ extension SwipeCellModifier {
                 .offset(x: offset)
             }
         }
-        .contentShape(Rectangle())
+        .contentShape(RoundedRectangle(cornerRadius: 28))
         .gesture(getGesture())
         .onAppear {
             self.setStatus(status)
@@ -74,7 +74,7 @@ extension SwipeCellModifier {
             }
         }
         .ifIs(clip) {
-            $0.clipShape(Rectangle())
+            $0.clipShape(RoundedRectangle(cornerRadius: 28))
         }
         .onChange(of: status){ status in
             switch status {
