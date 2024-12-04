@@ -56,7 +56,7 @@ extension SwipeCellModifier {
             }
         }
         .contentShape(Rectangle())
-        .gesture(getGesture())
+        .simultaneousGesture(getGesture())
         .onAppear {
             self.setStatus(status)
             switch status {
