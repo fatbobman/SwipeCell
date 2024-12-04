@@ -145,3 +145,5 @@ destructiveDelay 形式的 button，需要在action中添加 dismissDestructiveD
 ## 欢迎多提宝贵意见!
 
 SwipeCell is available under the [MIT license](LICENSE.md).
+
+You can give your feedback or suggestions by creating Issues. You can also contact me on Twitter [@fatbobman](https://x.com/fatbobman).
