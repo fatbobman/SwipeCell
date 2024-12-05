@@ -56,7 +56,7 @@ extension SwipeCellModifier {
             }
         }
         .contentShape(Rectangle())
-        .simultaneousGesture(getGesture())
+        .myGesture(getGesture())
         .onAppear {
             self.setStatus(status)
             switch status {
@@ -177,4 +177,15 @@ extension SwipeCellModifier {
         NotificationCenter.default.post(name: .swipeCellReset, object: nil)
     }
 
+}
+
+extension View {
+    @ViewBuilder
+    func myGesture(_ g:_EndedGesture<_ChangedGesture<DragGesture>>) -> some View {
+        if #available(iOS 18, *) {
+            simultaneousGesture(g)
+        } else {
+            gesture(g)
+        }
+    }
 }
