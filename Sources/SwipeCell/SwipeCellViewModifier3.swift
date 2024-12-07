@@ -8,8 +8,16 @@ import SwiftUI
 extension SwipeCellModifier {
     func getGesture() -> _EndedGesture<_ChangedGesture<DragGesture>> {
         //为了避免editMode切换时的异常动画,所以在进入editmode后仍然继续绘制Slots,只是对手势做了处理,避免了滑动
+        let nonEditGragMinDistance: CGFloat = {
+            if #available(iOS 18, *) {
+            #if compiler(>=6.0)
+                return 20
+            #endif
+            }
+            return 0
+        }()
         return DragGesture(
-            minimumDistance: editMode?.wrappedValue == .active ? 10000 : 0,
+            minimumDistance: editMode?.wrappedValue == .active ? 10000 : nonEditGragMinDistance,
             coordinateSpace: .local
         )
         .onChanged { value in
