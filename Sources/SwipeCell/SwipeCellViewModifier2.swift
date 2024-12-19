@@ -39,18 +39,14 @@ extension SwipeCellModifier {
                         .environment(\.cellStatus, status)
                 }
                 .zIndex(3)
-                .highPriorityGesture(
-                    TapGesture(count: 1),
-                    including: currentCellID == nil ? .subviews : .none
-                )
                 .contentShape(Rectangle())
-                //解决Button冲突问题.
-                .onTapGesture(
-                    count: currentCellID != nil ? 1 : 4,
-                    perform: {
+                .highPriorityGesture(
+                    TapGesture(count: 1)
+                    .onEnded {
                         resetStatus()
                         dismissNotification()
-                    }
+                    },
+                    including: currentCellID == nil ? .subviews : .gesture
                 )
                 .offset(x: offset)
             }
@@ -183,7 +179,11 @@ extension View {
     @ViewBuilder
     func myGesture(_ g:_EndedGesture<_ChangedGesture<DragGesture>>) -> some View {
         if #available(iOS 18, *) {
-            simultaneousGesture(g)
+            #if compiler(>=6.0)
+            highPriorityGesture(g)
+            #else
+            gesture(g)
+            #endif
         } else {
             gesture(g)
         }
