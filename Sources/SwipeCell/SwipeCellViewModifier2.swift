@@ -52,7 +52,12 @@ extension SwipeCellModifier {
             }
         }
         .contentShape(Rectangle())
-        .myGesture(getGesture())
+        .myGesture(
+            getGesture(),
+            editMode: editMode,
+            onChanged: handlePanGestureOnChangedEvent(width:),
+            onEnded: handlePanGestureEndedEvent(width:)
+        )
         .onAppear {
             self.setStatus(status)
             switch status {
@@ -177,15 +182,72 @@ extension SwipeCellModifier {
 
 extension View {
     @ViewBuilder
-    func myGesture(_ g:_EndedGesture<_ChangedGesture<DragGesture>>) -> some View {
+    func myGesture(
+        _ g:_EndedGesture<_ChangedGesture<DragGesture>>,
+        editMode: Binding<EditMode>?,
+        onChanged: @escaping (CGFloat) -> Void,
+        onEnded: @escaping (CGFloat) -> Void
+    ) -> some View {
         if #available(iOS 18, *) {
-            #if compiler(>=6.0)
-            highPriorityGesture(g)
-            #else
-            gesture(g)
-            #endif
+            gesture(
+                SWCPanGesture(editMode: editMode ?? .constant(.inactive)) { recognizer in
+                    let width = recognizer.translation(in: recognizer.view).x
+                    let state = recognizer.state
+                    switch state {
+                    case .changed:
+                        onChanged(width)
+                    case .ended:
+                        onEnded(width)
+                    default:
+                        break
+                    }
+                }
+            )
         } else {
             gesture(g)
+        }
+    }
+}
+
+@available(iOS 18.0, *)
+struct SWCPanGesture: UIGestureRecognizerRepresentable {
+    @Binding var editMode: EditMode
+    var handle: (UIPanGestureRecognizer) -> Void
+
+    func makeCoordinator(converter: CoordinateSpaceConverter) -> Coordinator { .init() }
+
+    func makeUIGestureRecognizer(context: Context) -> UIPanGestureRecognizer {
+        let gesture = UIPanGestureRecognizer()
+        gesture.delegate = context.coordinator
+        gesture.isEnabled = true
+        return gesture
+    }
+
+    func updateUIGestureRecognizer(_ recognizer: UIPanGestureRecognizer, context: Context) {
+        if editMode == .active {
+            recognizer.isEnabled = false
+        } else {
+            recognizer.isEnabled = true
+        }
+    }
+
+    func handleUIGestureRecognizerAction(_ recognizer: UIPanGestureRecognizer, context: Context) {
+        handle(recognizer)
+    }
+
+    class Coordinator: NSObject, UIGestureRecognizerDelegate {
+        func gestureRecognizer(
+            _ gestureRecognizer: UIGestureRecognizer,
+            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+        ) -> Bool {
+            false
+        }
+
+        func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+            guard let panRecognizer = gestureRecognizer as? UIPanGestureRecognizer else { return false }
+
+            let velocity = panRecognizer.velocity(in: gestureRecognizer.view)
+            return abs(velocity.y) < abs(velocity.x)
         }
     }
 }
