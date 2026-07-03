@@ -5,6 +5,18 @@ SwipeCell 需要 XCode 12 ,iOS 14
 
 ![Demo](Image/demo.gif)
 
+## SwipeCell v3 Beta
+
+The `main` branch remains the current stable version. SwipeCell v3 is available
+for beta testing on the [`v3-beta`](https://github.com/fatbobman/SwipeCell/tree/v3-beta)
+branch and has not replaced `main`.
+
+SwiftPM users who want to test v3 can depend on the beta branch:
+
+```swift
+.package(url: "https://github.com/fatbobman/SwipeCell.git", branch: "v3-beta")
+```
+
 ## 配置Button
 ```swift
 let button1 = SwipeCellButton(buttonStyle: .titleAndImage,
