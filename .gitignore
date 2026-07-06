@@ -131,11 +131,7 @@ Temporary Items
 
 # fatSkills local links
 .agents/skills/fatbobman/
-.claude/skills/frame
-.claude/skills/pm
-.claude/skills/design
-.claude/skills/dev
-.claude/skills/qa
+.claude/skills/
 
 # Tuist generated demo projects
 Demo/ManualTestApp/Derived/
