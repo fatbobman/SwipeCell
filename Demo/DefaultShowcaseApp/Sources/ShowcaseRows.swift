@@ -27,6 +27,18 @@ struct ShowcaseMessageRow: View {
                             .fill(.blue)
                             .frame(width: 8, height: 8)
                     }
+                    if message.archived {
+                        stateIndicator("archivebox.fill", tint: .blue)
+                    }
+                    if message.flagged {
+                        stateIndicator("flag.fill", tint: .yellow)
+                    }
+                    if message.pinned {
+                        stateIndicator("pin.fill", tint: .indigo)
+                    }
+                    if message.snoozed {
+                        stateIndicator("clock.fill", tint: .orange)
+                    }
                 }
 
                 Text(message.subject)
@@ -60,6 +72,13 @@ struct ShowcaseMessageRow: View {
 
     private var initials: String {
         String(message.sender.prefix(1))
+    }
+
+    // Caption-sized so the sender line keeps its height; tints mirror the matching action tints.
+    private func stateIndicator(_ systemImage: String, tint: Color) -> some View {
+        Image(systemName: systemImage)
+            .font(.caption)
+            .foregroundStyle(tint)
     }
 }
 

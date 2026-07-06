@@ -115,7 +115,7 @@ struct StylesShowcaseView: View {
                         id: ShowcaseActionID.markRead,
                         tint: .purple,
                         action: {
-                            status = "Marked \(message.subject)"
+                            markRead(message.id)
                         }
                     ) { context in
                         ProgressBadgeLabel(
@@ -139,7 +139,25 @@ struct StylesShowcaseView: View {
     }
 
     private func flag(_ id: ShowcaseMessage.ID) {
-        status = "Flagged \(subject(for: id))"
+        guard let index = messages.firstIndex(where: { $0.id == id }) else { return }
+        withAnimation {
+            messages[index].flagged.toggle()
+        }
+        status =
+            messages[index].flagged
+            ? "Flagged \(messages[index].subject)"
+            : "Unflagged \(messages[index].subject)"
+    }
+
+    private func markRead(_ id: ShowcaseMessage.ID) {
+        guard let index = messages.firstIndex(where: { $0.id == id }) else { return }
+        withAnimation {
+            messages[index].unread.toggle()
+        }
+        status =
+            messages[index].unread
+            ? "Marked \(messages[index].subject) unread"
+            : "Marked \(messages[index].subject) read"
     }
 
     private func subject(for id: ShowcaseMessage.ID) -> String {

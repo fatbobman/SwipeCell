@@ -15,7 +15,7 @@ struct CoordinationShowcaseView: View {
                     systemImage: "flag.fill",
                     tint: Color.yellow.gradient
                 ) { id in
-                    status = "Flagged \(subject(for: id))"
+                    flag(id)
                 }
             ],
             trailing: [
@@ -96,6 +96,17 @@ struct CoordinationShowcaseView: View {
         let accepted = manager.open(id, side: side, animated: true)
         let sideName = side == .leading ? "leading" : "trailing"
         status = accepted ? "Opened \(sideName) actions" : "Row is not ready to open"
+    }
+
+    private func flag(_ id: ShowcaseMessage.ID) {
+        guard let index = messages.firstIndex(where: { $0.id == id }) else { return }
+        withAnimation {
+            messages[index].flagged.toggle()
+        }
+        status =
+            messages[index].flagged
+            ? "Flagged \(messages[index].subject)"
+            : "Unflagged \(messages[index].subject)"
     }
 
     private func subject(for id: ShowcaseMessage.ID) -> String {

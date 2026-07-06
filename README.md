@@ -79,7 +79,9 @@ struct InboxView: View {
     }
 
     private func delete(_ message: Message) {
-        messages.removeAll { $0.id == message.id }
+        withAnimation {
+            messages.removeAll { $0.id == message.id }
+        }
     }
 }
 ```

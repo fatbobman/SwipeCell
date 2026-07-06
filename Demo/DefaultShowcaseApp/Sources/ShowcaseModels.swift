@@ -15,6 +15,10 @@ struct ShowcaseMessage: Identifiable, Hashable {
     var subject: String
     var preview: String
     var unread: Bool
+    var archived = false
+    var flagged = false
+    var pinned = false
+    var snoozed = false
     var tint: Color
 
     static let inboxSamples: [ShowcaseMessage] = [
@@ -90,7 +94,7 @@ struct ShowcaseMessage: Identifiable, Hashable {
             sender: "Label",
             subject: "Custom label",
             preview: "Only the label view is custom; layout remains library-owned.",
-            unread: false,
+            unread: true,
             tint: .brown
         ),
     ]

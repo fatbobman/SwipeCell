@@ -48,14 +48,25 @@ struct InboxShowcaseView: View {
         }
     }
 
+    // Archive is a reversible state toggle with a row-level indicator; only Delete removes the
+    // row, so the two trailing actions stay visually distinct in the demo. The toggle is
+    // deliberately not wrapped in withAnimation: an icon transition would run while the closing
+    // row is still translating back, which reads as the icon drifting.
     private func archive(_ id: ShowcaseMessage.ID) {
-        guard let message = messages.first(where: { $0.id == id }) else { return }
-        status = "Archived \(message.subject)"
+        guard let index = messages.firstIndex(where: { $0.id == id }) else { return }
+        messages[index].archived.toggle()
+        status =
+            messages[index].archived
+            ? "Archived \(messages[index].subject)"
+            : "Unarchived \(messages[index].subject)"
     }
 
     private func delete(_ id: ShowcaseMessage.ID) {
         guard let index = messages.firstIndex(where: { $0.id == id }) else { return }
-        let message = messages.remove(at: index)
+        let message = messages[index]
+        withAnimation {
+            messages.removeAll { $0.id == id }
+        }
         deletedMessages.append(DeletedMessage(message: message, originalIndex: index))
         status = "Deleted \(message.subject)"
     }
@@ -63,7 +74,9 @@ struct InboxShowcaseView: View {
     private func restoreLatestDeleted() {
         guard let deleted = deletedMessages.popLast() else { return }
         let index = min(deleted.originalIndex, messages.endIndex)
-        messages.insert(deleted.message, at: index)
+        withAnimation {
+            messages.insert(deleted.message, at: index)
+        }
         status = "Restored \(deleted.message.subject)"
     }
 }

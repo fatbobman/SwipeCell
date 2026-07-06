@@ -128,7 +128,9 @@ private func archive(_ id: Message.ID) {
 }
 
 private func delete(_ id: Message.ID) {
-    messages.removeAll { $0.id == id }
+    withAnimation {
+        messages.removeAll { $0.id == id }
+    }
 }
 ```
 

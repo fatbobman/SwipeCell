@@ -4,6 +4,8 @@ import SwipeCell
 struct BehaviorsShowcaseView: View {
     @State private var messages = ShowcaseMessage.behaviorSamples
     @State private var status = ShowcaseStatus.empty
+    @State private var pendingDelete: PendingDelete?
+    @State private var isDeleteDialogPresented = false
 
     var body: some View {
         NavigationStack {
@@ -30,6 +32,31 @@ struct BehaviorsShowcaseView: View {
             }
             .navigationTitle("Behaviors")
             .showcaseInlineNavigationTitle()
+            .toolbar {
+                Button("Reset") {
+                    reset()
+                }
+            }
+            .confirmationDialog(
+                "Delete \"\(pendingDelete?.subject ?? "message")\"?",
+                isPresented: $isDeleteDialogPresented,
+                titleVisibility: .visible
+            ) {
+                Button("Delete", role: .destructive) {
+                    resolvePendingDelete(confirmed: true)
+                }
+                Button("Keep", role: .cancel) {
+                    resolvePendingDelete(confirmed: false)
+                }
+            }
+            .onChange(of: isDeleteDialogPresented) { _, isPresented in
+                // Tap-outside dismissal skips both button actions; normalize it to cancel so the
+                // held-expanded row is never stranded. resolvePendingDelete is idempotent, so this
+                // is a no-op when a button already resolved.
+                if !isPresented {
+                    resolvePendingDelete(confirmed: false)
+                }
+            }
             .swipeCellScope()
         }
     }
@@ -60,9 +87,9 @@ struct BehaviorsShowcaseView: View {
                     tint: .orange,
                     fireTiming: .triggerAndHoldOpen
                 ) { id in
-                    status = "Held open for \(subject(for: id))"
+                    snooze(id)
                 },
-                deleteAction(for: message, completion: .triggerHoldExpanded),
+                holdExpandedDeleteAction(for: message),
             ]
         case "behavior-destructive":
             [
@@ -85,6 +112,8 @@ struct BehaviorsShowcaseView: View {
         }
     }
 
+    /// `.directTrigger` removes the row as soon as the full swipe lands; `.triggerAfterReset`
+    /// collapses first, then the library calls this same closure. Both stay id-only.
     private func deleteAction(
         for message: ShowcaseMessage,
         completion: SwipeActionCompletion
@@ -96,14 +125,54 @@ struct BehaviorsShowcaseView: View {
             systemImage: "trash.fill",
             role: .destructive(.init(completion: completion)),
             tint: .red
-        ) { id, controller in
-            status = "Delete requested for \(subject(for: id))"
-            if completion == .triggerHoldExpanded {
-                controller.holdExpanded()
-            } else {
-                controller.collapse()
-            }
+        ) { id in
+            delete(id)
         }
+    }
+
+    /// `.triggerHoldExpanded` keeps the row in its hold geometry until the dialog resolves; the
+    /// controller is only used for the cancel path — a confirmed delete removes the row instead,
+    /// which is a legal terminal state without resolving the controller.
+    private func holdExpandedDeleteAction(for message: ShowcaseMessage) -> SwipeAction {
+        SwipeAction(
+            id: ShowcaseActionID.delete,
+            value: message.id,
+            "Delete",
+            systemImage: "trash.fill",
+            role: .destructive(.init(completion: .triggerHoldExpanded)),
+            tint: .red
+        ) { id, controller in
+            pendingDelete = PendingDelete(
+                id: id,
+                subject: subject(for: id),
+                controller: controller
+            )
+            isDeleteDialogPresented = true
+            status = "Confirm delete for \(subject(for: id))"
+        }
+    }
+
+    /// Single resolution funnel for the hold-expanded confirmation: dialog buttons and the
+    /// dismissal fallback all land here, and the first caller wins.
+    private func resolvePendingDelete(confirmed: Bool) {
+        guard let pending = pendingDelete else { return }
+        pendingDelete = nil
+        if confirmed {
+            withAnimation {
+                messages.removeAll { $0.id == pending.id }
+            }
+            status = "Deleted \(pending.subject)"
+        } else {
+            pending.controller.collapse()
+            status = "Kept \(pending.subject)"
+        }
+    }
+
+    private func reset() {
+        withAnimation {
+            messages = ShowcaseMessage.behaviorSamples
+        }
+        status = ShowcaseStatus.empty
     }
 
     private func accessory(for message: ShowcaseMessage) -> String {
@@ -124,14 +193,39 @@ struct BehaviorsShowcaseView: View {
     }
 
     private func delete(_ id: ShowcaseMessage.ID) {
-        status = "Deleted \(subject(for: id))"
+        let subject = subject(for: id)
+        withAnimation {
+            messages.removeAll { $0.id == id }
+        }
+        status = "Deleted \(subject)"
     }
 
     private func pin(_ id: ShowcaseMessage.ID) {
-        status = "Pinned \(subject(for: id))"
+        guard let index = messages.firstIndex(where: { $0.id == id }) else { return }
+        withAnimation {
+            messages[index].pinned.toggle()
+        }
+        status =
+            messages[index].pinned
+            ? "Pinned \(messages[index].subject)"
+            : "Unpinned \(messages[index].subject)"
+    }
+
+    private func snooze(_ id: ShowcaseMessage.ID) {
+        guard let index = messages.firstIndex(where: { $0.id == id }) else { return }
+        withAnimation {
+            messages[index].snoozed.toggle()
+        }
+        status = "Held open for \(messages[index].subject)"
     }
 
     private func subject(for id: ShowcaseMessage.ID) -> String {
         messages.first(where: { $0.id == id })?.subject ?? "message"
     }
+}
+
+private struct PendingDelete {
+    let id: ShowcaseMessage.ID
+    let subject: String
+    let controller: SwipeActionTriggerController
 }
