@@ -1,57 +1,51 @@
 # SwipeCell
 
-SwipeCell is a SwiftUI library for building swipeable rows in custom lists and
-scrolling surfaces. It starts close to SwiftUI's `swipeActions` model, then adds
-built-in slot and token renderers, structured action styling, ShapeStyle tints,
-scoped coordination, and controlled customization inside the default renderer.
+SwipeCell brings configurable, coordinated swipe actions to rows in SwiftUI lists and custom scrolling surfaces.
+
+![Swift](https://img.shields.io/badge/Swift-6.2+-orange?style=flat) ![Platforms](https://img.shields.io/badge/Platforms-iOS%2018+%20%7C%20macOS%2015+-blue?style=flat) ![License](https://img.shields.io/badge/License-MIT-green?style=flat) [![DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/fatbobman/SwipeCell)
+
+English | [中文](README_zh.md)
+
+## Motivation
+
+SwiftUI's native swipe actions are a natural fit for standard containers, but custom lists and scrolling surfaces often need the same interaction model with greater control over rendering, coordination, and destructive behavior.
+
+SwipeCell keeps the familiar action-based API while providing its own slot and token renderers, scoped row coordination, and controlled customization. Version 3 is currently available for beta testing from the `v3-beta` branch, so its API and behavior may still evolve before replacing the stable release on `main`.
+
+## Features
 
 <video src="https://github.com/user-attachments/assets/927526af-791f-47ac-99b2-87b84ec2b3c8" controls autoplay muted loop playsinline></video>
 
-## Requirements
-
-- Swift 6.2
-- iOS 18+
-- macOS 15+
-- Swift Package Manager
-
-## Beta Status
-
-SwipeCell v3 is currently published for beta testing from the `v3-beta` branch.
-The public `main` branch remains the stable version until v3 is ready to
-replace it. APIs and behavior on `v3-beta` may continue to change during the
-beta period.
-
-## Installation
-
-Add SwipeCell to your package dependencies:
-
-```swift
-.package(url: "https://github.com/fatbobman/SwipeCell.git", branch: "v3-beta")
-```
-
-Then add the product to your target:
-
-```swift
-.product(name: "SwipeCell", package: "SwipeCell")
-```
+- SwiftUI-first row actions for `List`, `ScrollView`, and custom scrolling surfaces
+- Leading and trailing actions with slot or token presentation, `ShapeStyle` tints, and structured label styling
+- Scoped coordination, programmatic open and close, reusable action templates, and configurable destructive behavior
+- Native support for iOS 18+ and macOS 15+
 
 ## Quick Start
 
-Import SwipeCell, attach actions to each row, and place `swipeCellScope()` on the
-container that should coordinate the rows.
+Add SwipeCell with Swift Package Manager from the current beta branch:
+
+```swift
+dependencies: [
+    .package(
+        url: "https://github.com/fatbobman/SwipeCell.git",
+        branch: "v3-beta"
+    )
+]
+```
+
+Then add `.product(name: "SwipeCell", package: "SwipeCell")` to your target and attach actions to a row inside a swipe-cell scope:
 
 ```swift
 import SwiftUI
 import SwipeCell
 
 struct InboxView: View {
-    @State private var messages = Message.samples
-
     var body: some View {
-        List(messages) { message in
-            MessageRow(message: message)
+        List(1...5, id: \.self) { messageID in
+            Text("Message \(messageID)")
                 .swipeCellActions(
-                    message.id,
+                    messageID,
                     trailing: [
                         SwipeAction(
                             "Delete",
@@ -59,103 +53,33 @@ struct InboxView: View {
                             role: .destructive(),
                             tint: .red
                         ) {
-                            delete(message)
-                        },
-                        SwipeAction(
-                            "Archive",
-                            systemImage: "archivebox.fill",
-                            tint: .blue
-                        ) {
-                            archive(message)
-                        },
+                            print("Delete message \(messageID)")
+                        }
                     ]
                 )
         }
         .swipeCellScope()
     }
-
-    private func archive(_ message: Message) {
-        // Update your model here.
-    }
-
-    private func delete(_ message: Message) {
-        withAnimation {
-            messages.removeAll { $0.id == message.id }
-        }
-    }
-}
-```
-
-The row id passed to `swipeCellActions` should be stable for the life of that
-row. The scope coordinates open rows and close behavior inside the container.
-
-## Customize the Default Look
-
-The default path can still use leading and trailing actions, ShapeStyle tint,
-token reveal, and environment overrides.
-
-```swift
-List(messages) { message in
-    MessageRow(message: message)
-        .swipeCellActions(
-            message.id,
-            leading: [
-                SwipeAction(
-                    "Pin",
-                    systemImage: "pin.fill",
-                    tint: Color.green.gradient
-                ) {
-                    pin(message)
-                },
-            ],
-            trailing: [
-                SwipeAction(
-                    "Delete",
-                    systemImage: "trash.fill",
-                    role: .destructive(),
-                    tint: Color.red.gradient
-                ) {
-                    delete(message)
-                },
-                SwipeAction(
-                    "Archive",
-                    systemImage: "archivebox.fill",
-                    tint: .blue
-                ) {
-                    archive(message)
-                },
-            ],
-            revealStyle: .token
-        )
-}
-.swipeActionDefaultLabelStyle(
-    .system(
-        iconSize: 18,
-        titleSize: 11,
-        iconWeight: .semibold,
-        titleWeight: .semibold
-    )
-)
-.swipeCellScope()
-```
-
-For a broader default, override the configuration in the environment:
-
-```swift
-.swipeCellConfiguration { configuration in
-    configuration.style.defaultRevealStyle = .token
 }
 ```
 
 ## Documentation
 
-- [Getting Started](Documentation/GettingStarted.md): the default SwiftUI-like
-  path, from a minimal row to default visual tuning.
-- [Guides](Documentation/Guides.md): real containers, manager and template
-  recipes, destructive behavior, timing, and layout options.
-- [Advanced](Documentation/Advanced.md): custom labels, custom styles, context,
-  and tint plumbing inside the built-in slot/token renderer.
+- Want to build your first row and tune the default appearance? Read [Getting Started](Documentation/GettingStarted.md).
+- Want recipes for containers, coordination, templates, timing, and destructive actions? Read [Guides](Documentation/Guides.md).
+- Want to create custom labels, styles, and progress-driven visuals? Read [Advanced](Documentation/Advanced.md).
 
 ## License
 
-SwipeCell is available under the [MIT license](LICENSE.md).
+SwipeCell is available under the MIT license. See [LICENSE.md](LICENSE.md) for more information.
+
+## Author
+
+**Fatbobman (肘子)** — Blog: [fatbobman.com](https://fatbobman.com) · X: [@fatbobman](https://x.com/fatbobman)
+
+## Support
+
+If this project helps you, please consider supporting my work:
+
+- 📮 Subscribe to [Fatbobman's Swift Weekly](https://weekly.fatbobman.com) — fresh Swift and Apple-ecosystem insights every week
+- ☕️ [Buy Me a Coffee](https://buymeacoffee.com/fatbobman)
